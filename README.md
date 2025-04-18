@@ -1,1 +1,3 @@
-# ScriptGen
+# Capcut SRT Script Generator
+
+
