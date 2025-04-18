@@ -1,5 +1,6 @@
 # CapCut SRT Generator (PHP + JS)
 ===============================
+
 An open-source, lightweight tool to convert plain text scripts into CapCut-compatible .SRT subtitle files with accurate timing and formatting.
 
 📌 DESCRIPTION
