@@ -1,60 +1,103 @@
 # CapCut SRT Generator (PHP + JS)
-===============================
+=================================
 
-An open-source, lightweight tool to convert plain text scripts into CapCut-compatible .SRT subtitle files with accurate timing and formatting.
+**Version:** 1.2.0  
+**Last Updated:** May 2025  
+**Author:** Tarek Tarabichi  
+**License:** MIT
+
+An open-source, lightweight tool to convert plain text scripts into CapCut-compatible .SRT subtitle files with accurate timing, formatting, and voiceover compatibility.
+
+---
 
 📌 DESCRIPTION
 -------------
-This tool allows content creators, video editors, and storytellers to paste their script into a textbox, set timing parameters, and instantly generate subtitles for platforms like CapCut or Premiere Pro.
+This tool enables content creators, editors, and storytellers to convert any script into .srt subtitles formatted for CapCut and other video editors. It’s built for quick use—no installations, no database, just a clean UI and accurate subtitle timing.
+
+---
 
 ✅ FEATURES
 ----------
-- Paste your script and generate .srt files instantly
-- Adjust Words Per Second (WPS), Minimum Duration, and Pause Padding
-- Copy subtitles or download the .srt file
-- Clean and responsive 60/40 UI layout with live preview
-- Fully runs in-browser with a PHP backend (no database required)
+- Paste your script and generate .srt subtitles instantly
+- Split text into blocks of ~450 characters for CapCut voiceover compatibility
+- Customize:
+  - Words Per Second (WPS)
+  - Minimum Duration per block
+  - Pause Padding for punctuation
+- Copy SRT output or download the file
+- Fixed-height, scrollable preview and input to maintain layout
+- One-click reset to clear and reload interface
+- Fully runs in-browser with PHP backend
+- No external dependencies
 
+---
+
+📸 INTERFACE SNAPSHOT
+---------------------
 ![UI/UX Interface](scriptgen-local-2025-04-18-16_05_26.png)
 
+---
 
 🚀 HOW TO USE
 -------------
-1. Clone or download the repository to your localhost or web server.
-2. Make sure you have PHP installed (PHP 7.4 or later recommended).
-3. Ensure the `/srt_files/` folder exists and is writable:
-   - On Linux/Mac:
-     mkdir srt_files
-     chmod 775 srt_files
-4. Open `index.php` in your browser via localhost (e.g. http://localhost/CapCut-SRT/index.php).
-5. Paste your text, adjust timing, and click “Process” to preview subtitles.
-6. Use the Copy or Download buttons to export your final .srt file.
+1. Clone or download the repository to your web server or localhost.
+2. Ensure PHP 7.4+ is installed and configured.
+3. Create a writable folder for SRT output:
+
+4. Open `index.php` in your browser (e.g. `http://localhost/CapCut-SRT/index.php`).
+5. Paste your script, tweak timing options, and click **Process**.
+6. Copy the result or download the `.srt` file.
+
+---
 
 🧱 FILE STRUCTURE
 -----------------
-- index.php          → Main interface with input, preview, and controls
-- generate_srt.php   → PHP backend script that parses text and generates SRT
-- /srt_files/        → Writable folder where .srt files are saved before download
+- `index.php`        → Main UI with input box, preview, and controls
+- `generate_srt.php` → PHP backend to convert scripts to `.srt`
+- `/srt_files/`      → Writable folder for temporary subtitle file storage
+
+---
 
 🛠 TECH STACK
 ------------
-- PHP (no database required)
-- HTML/CSS (Flexbox layout)
-- Vanilla JavaScript (Fetch API, clipboard, file generation)
+- PHP (no database)
+- HTML5 + CSS (Flexbox layout)
+- Vanilla JavaScript (Clipboard, Fetch API, File handling)
 
-🎯 ROADMAP (Next Features)
---------------------------
-- Auto line splitting for long lines
-- Speaker label parsing (e.g. `Narrator:`)
+---
+
+🧭 VERSION HISTORY
+------------------
+**v1.2.0 – May 2025**
+- NEW: Split script into 450-character blocks (CapCut safe)
+- NEW: "Copy Preview" icon and "New Script" reset button
+- UI: Fixed-height scrollable text area and preview
+- Refactor: SRT logic based on character block duration, not just lines
+
+**v1.0.0 – Initial Release**
+- Core subtitle generation from raw script
+- Parameter controls for WPS, timing, and pauses
+- File download + live preview
+
+---
+
+🎯 ROADMAP
+----------
+- Auto line splitting and reflow for improved readability
+- Speaker labels detection (e.g., “Narrator:”)
 - Dark/Light mode toggle
-- SRT structure validation (time overlaps, line length)
+- SRT validation for line length and time overlaps
+
+---
 
 👨‍💻 CREDITS
 ------------
-Developed by Tarek Tarabichi
-MIT License – Free to use, modify, and distribute.
+Developed by **Tarek Tarabichi**  
+MIT License – Free to use, modify, and distribute
+
+---
 
 📬 FEEDBACK & CONTRIBUTIONS
 ---------------------------
-Found a bug? Have a feature idea?
-Feel free to open an issue or submit a pull request via GitHub.
+Found a bug or want to suggest a feature?  
+Open an issue or submit a pull request via GitHub.
