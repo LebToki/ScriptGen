@@ -97,6 +97,16 @@ MIT License – Free to use, modify, and distribute
 
 ---
 
+**Contribution Guidelines:**
+Encourage community involvement:
+
+```markdown
+## 🤝 Contributing
+
+Contributions are welcome! Please fork the repository and submit a pull request for any enhancements or bug fixes.
+
+For major changes, please open an issue first to discuss what you would like to change.
+
 📬 FEEDBACK & CONTRIBUTIONS
 ---------------------------
 Found a bug or want to suggest a feature?  
