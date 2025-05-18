@@ -2,6 +2,7 @@ CapCut SRT Generator (PHP + JS)
 ===============================
 
 Version: 1.3.0
+
 Last Updated: May 2025
 Author: Tarek Tarabichi
 License: MIT
