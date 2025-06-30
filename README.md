@@ -5,7 +5,7 @@ Version: 1.3.0
 
 Last Updated: May 2025
 Author: Tarek Tarabichi
-License: MIT
+License: [MIT](LICENSE)
 
 An open-source, browser-based tool to convert scripts into CapCut-compatible .srt subtitle files, optimized for voiceover and text-to-speech clarity.
 
@@ -83,6 +83,10 @@ CREDITS
 -------
 Developed by Tarek Tarabichi
 MIT License – Free to use, modify, and distribute
+
+LICENSE
+-------
+This project is licensed under the [MIT License](LICENSE).
 
 FEEDBACK & CONTRIBUTIONS
 -------------------------
