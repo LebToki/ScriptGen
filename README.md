@@ -24,6 +24,7 @@ FEATURES
     • Minimum duration per block
     • Pause padding for punctuation
 - Copy & Download Options – Copy to clipboard or save .srt directly
+- Custom Filenames – Optional field to name your subtitle file
 - Fixed Layout – Scrollable text area and preview box for consistent UI
 - Refresh Option – “New Script” button resets input instantly
 
@@ -42,6 +43,7 @@ INSTALLATION & USAGE
    chmod 775 srt_files
 
 5. Open index.php in your browser (e.g. http://localhost/ScriptGen/index.php)
+6. (Optional) Enter a custom filename before processing to change the output name
 
 FILE STRUCTURE
 --------------
