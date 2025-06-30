@@ -24,7 +24,8 @@ try {
             floatval($data['wpm'] ?? 3),
             floatval($data['min_time'] ?? 1.5),
             floatval($data['punctuation_pad'] ?? 0.5),
-            intval($data['max_length'] ?? 450)
+            intval($data['max_length'] ?? 450),
+            $data['name'] ?? ''
         );
 
         echo cleanOutput([
@@ -49,7 +50,7 @@ try {
     exit;
 }
 
-function processScript($script, $wpm, $minTime, $punctuationPad, $maxLength) {
+function processScript($script, $wpm, $minTime, $punctuationPad, $maxLength, $name = '') {
     if ($wpm < 0.5 || $wpm > 10) throw new Exception('Invalid words per second value');
     if ($minTime < 0.5 || $minTime > 10) throw new Exception('Invalid minimum duration');
     if ($punctuationPad < 0 || $punctuationPad > 2) throw new Exception('Invalid punctuation padding');
@@ -76,7 +77,14 @@ function processScript($script, $wpm, $minTime, $punctuationPad, $maxLength) {
         $index++;
     }
 
-    $filename = 'generated_' . time() . '_' . md5($srt) . '.srt';
+    $safeName = '';
+    if ($name !== '') {
+        $safeName = preg_replace('/[^a-z0-9_-]/i', '_', $name);
+    }
+    if ($safeName === '') {
+        $safeName = 'generated_' . time() . '_' . md5($srt);
+    }
+    $filename = $safeName . '.srt';
     $dir = __DIR__ . '/srt_files';
     if (!is_dir($dir) && !mkdir($dir, 0755, true)) {
         throw new Exception('Could not create output directory');

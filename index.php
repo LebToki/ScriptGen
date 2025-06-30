@@ -128,6 +128,9 @@
         <input type="number" id="punctuation_pad" value="0.5" step="0.1" min="0">
       </label>
     </div>
+    <label style="margin-bottom:10px"><small>Filename (optional):</small>
+      <input type="text" id="filename" placeholder="my_subs">
+    </label>
     <textarea id="script" placeholder="Paste your script here..."></textarea>
     <div class="bottom-bar">
       <div>
@@ -153,13 +156,14 @@
   const downloadBtn = document.getElementById("downloadBtn");
   const copyBtn = document.getElementById("copyBtn");
   const copyStatus = document.getElementById("copyStatus");
-  let latestFile = "";function processScript() { const script = document.getElementById("script").value; const wpm = document.getElementById("wpm").value; const min_time = document.getElementById("min_time").value; const punctuation_pad = document.getElementById("punctuation_pad").value;
+  let latestFile = "";function processScript() { const script = document.getElementById("script").value; const wpm = document.getElementById("wpm").value; const min_time = document.getElementById("min_time").value; const punctuation_pad = document.getElementById("punctuation_pad").value; const filename = document.getElementById("filename").value;
 
 const formData = new FormData();
 formData.append("script", script);
 formData.append("wpm", wpm);
 formData.append("min_time", min_time);
 formData.append("punctuation_pad", punctuation_pad);
+formData.append("name", filename);
 formData.append("preview_only", "1");
 
 fetch("generate_srt.php", {
