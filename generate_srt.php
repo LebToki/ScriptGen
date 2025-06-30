@@ -10,6 +10,10 @@ function cleanOutput($data) {
     return json_encode($data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
 }
 
+function stripMarkdown($text) {
+    return preg_replace('/[#*]+/', '', $text);
+}
+
 try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $input = file_get_contents('php://input');
@@ -55,6 +59,7 @@ function processScript($script, $wpm, $minTime, $punctuationPad, $maxLength, $na
     if ($minTime < 0.5 || $minTime > 10) throw new Exception('Invalid minimum duration');
     if ($punctuationPad < 0 || $punctuationPad > 2) throw new Exception('Invalid punctuation padding');
 
+    $script = stripMarkdown($script);
     $chunks = splitIntoChunks($script, $maxLength);
     if (empty($chunks)) throw new Exception('No valid chunks found in script');
 
