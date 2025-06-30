@@ -18,7 +18,7 @@ FEATURES
 - Instant Subtitle Generation – Convert plain scripts into .srt format
 - CapCut Voiceover Compatibility – Auto-splits into 450-character blocks (max 500 safe)
 - Improved Sentence Flow – Breaks only on full stops (.) for natural voiceovers
-- Smart Cleanup – Strips markdown (###, ##, *, **) to prevent speech artifacts
+- Smart Cleanup – Sanitizes scripts with `stripMarkdown()` to remove markdown characters (###, ##, *, **) and prevent speech artifacts
 - Parameter Controls – Customize:
     • Words Per Second (WPS)
     • Minimum duration per block
