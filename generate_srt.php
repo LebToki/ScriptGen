@@ -35,7 +35,12 @@ try {
         echo cleanOutput([
             'success' => true,
             'preview' => $result['srt'],
-            'filename' => $result['filename']
+            'filename' => $result['filename'],
+            'stats' => [
+                'subtitle_count' => $result['subtitle_count'],
+                'total_duration' => $result['total_duration'],
+                'word_count' => $result['word_count']
+            ]
         ]);
         exit;
     } elseif ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['download'])) {
@@ -66,9 +71,11 @@ function processScript($script, $wpm, $minTime, $punctuationPad, $maxLength, $na
     $srt = "";
     $index = 1;
     $currentTime = 0.0;
+    $totalWords = 0;
 
     foreach ($chunks as $line) {
         $wordCount = str_word_count($line);
+        $totalWords += $wordCount;
         $duration = max($minTime, $wordCount / $wpm);
         if (preg_match('/[.!?]$/', $line)) {
             $duration += $punctuationPad;
@@ -81,6 +88,9 @@ function processScript($script, $wpm, $minTime, $punctuationPad, $maxLength, $na
         $currentTime += $duration;
         $index++;
     }
+    
+    $subtitleCount = $index - 1;
+    $totalDuration = $currentTime;
 
     $safeName = '';
     if ($name !== '') {
@@ -100,7 +110,13 @@ function processScript($script, $wpm, $minTime, $punctuationPad, $maxLength, $na
         throw new Exception('Could not save SRT file');
     }
 
-    return ['srt' => $srt, 'filename' => $filename];
+    return [
+        'srt' => $srt,
+        'filename' => $filename,
+        'subtitle_count' => $subtitleCount,
+        'total_duration' => round($totalDuration, 2),
+        'word_count' => $totalWords
+    ];
 }
 
 function splitIntoChunks($text, $maxLength = 450) {
