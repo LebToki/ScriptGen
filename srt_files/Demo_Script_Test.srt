@@ -1,0 +1,4 @@
+1
+00:00:00,000 --> 00:00:09,833
+Welcome to ScriptGen version two. This is a professional SRT generator. It supports frame-accurate timing for video editors like Filmora and Premiere Pro. The glassmorphic design looks stunning.
+

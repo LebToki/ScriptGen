@@ -1,97 +1,121 @@
-CapCut SRT Generator (PHP + JS)
-===============================
+ScriptGen - Professional SRT Generator
+======================================
 
-Version: 1.3.0
+![ScriptGen Banner](assets/og-banner.png)
 
-Last Updated: May 2025
-Author: Tarek Tarabichi
+Version: 2.0.0
+
+Last Updated: January 2026
+Author: [2TInteractive](https://2tinteractive.com)
 License: [MIT](LICENSE)
 
-An open-source, browser-based tool to convert scripts into CapCut-compatible .srt subtitle files, optimized for voiceover and text-to-speech clarity.
+A stunning, browser-based tool to convert scripts into SRT subtitle files, optimized for professional video editing workflows (Filmora, Premiere, DaVinci Resolve, CapCut).
 
-DESCRIPTION
------------
-CapCut SRT Generator allows content creators, editors, and educators to instantly transform written scripts into perfectly timed subtitle files. It splits your content into safe blocks, ensures clean speech flow, and avoids common pitfalls in auto-voiceovers.
+![ScriptGen Screenshot](assets/screenshot-main.png)
 
-FEATURES
---------
-- Instant Subtitle Generation – Convert plain scripts into .srt format
-- CapCut Voiceover Compatibility – Auto-splits into 450-character blocks (max 500 safe)
-- Improved Sentence Flow – Breaks only on full stops (.) for natural voiceovers
-- Smart Cleanup – Sanitizes scripts with `stripMarkdown()` to remove markdown characters (###, ##, *, **) and prevent speech artifacts
-- Parameter Controls – Customize:
-    • Words Per Second (WPS)
-    • Minimum duration per block
-    • Pause padding for punctuation
-- Copy & Download Options – Copy to clipboard or save .srt directly
-- Custom Filenames – Optional field to name your subtitle file
-- Fixed Layout – Scrollable text area and preview box for consistent UI
-- Refresh Option – “New Script” button resets input instantly
+## Features
 
-INSTALLATION & USAGE
----------------------
+**Core Features:**
+- 🎬 Instant SRT generation from plain text scripts
+- ⚡ Smart chunking with sentence-aware splitting
+- 📋 Copy to clipboard or download directly
+- 🎯 Custom script/project naming
+
+**Timing Controls:**
+- Words Per Second (WPS) adjustment
+- Minimum duration per subtitle block
+- Punctuation pause padding
+
+**Professional Video Editor Support:**
+- 🎞️ Frame Rate (FPS) alignment: 23.976, 24, 25, 29.97, 30, 50, 59.94, 60
+- ⏩ Start Time Offset for timeline sync
+- ↔️ Configurable gap between subtitles
+- 📏 Adjustable maximum block length
+
+**Export Options:**
+- Custom export path support
+- Automatic file naming with timestamps
+- Clean filename sanitization
+
+**Premium Glassmorphic UI:**
+- Frosted glass effects with blur
+- Animated gradient borders
+- Ambient lighting effects
+- Responsive mobile design
+
+## Installation & Usage
+
 1. Clone or download the repository:
+   ```bash
    git clone https://github.com/LebToki/ScriptGen.git
+   ```
 
 2. Navigate to the directory:
+   ```bash
    cd ScriptGen
+   ```
 
 3. Ensure PHP is installed (v7.4+ recommended)
 
 4. Make the output folder writable:
+   ```bash
    mkdir srt_files
    chmod 775 srt_files
+   ```
 
-5. Open index.php in your browser (e.g. http://localhost/ScriptGen/index.php)
-6. (Optional) Enter a custom filename before processing to change the output name
+5. Open `index.php` in your browser (e.g. http://localhost/ScriptGen/index.php)
 
-FILE STRUCTURE
---------------
-- index.php        → Frontend with text input, preview, and controls
-- generate_srt.php → Backend PHP processor with cleaning + timing logic
-- /srt_files/      → Writable folder for generated .srt files
+## File Structure
 
-TECH STACK
-----------
-- PHP (no database)
-- HTML/CSS (Responsive Flexbox)
-- JavaScript (Clipboard, Fetch API)
+```
+ScriptGen/
+├── index.php          # Frontend with glassmorphic UI
+├── generate_srt.php   # Backend with frame-accurate timing
+├── assets/
+│   ├── favicon.png    # App icon
+│   ├── og-banner.png  # Social media banner
+│   └── screenshot-main.png
+├── srt_files/         # Default export folder
+└── README.md
+```
 
-VERSION HISTORY
----------------
-v1.3.0 – May 2025
-- NEW: Splitting only at full stops (.) for smoother CapCut voiceovers
-- NEW: Markdown cleanup to remove symbols like ###, ##, *
-- Improved compatibility with text-to-speech readers
+## Tech Stack
 
-v1.2.0 – Early May 2025
+- PHP 7.4+ (no database required)
+- HTML5/CSS3 (Glassmorphism, backdrop-filter)
+- Vanilla JavaScript (Fetch API, Clipboard API)
+
+## Version History
+
+**v2.0.0 – January 2026**
+- NEW: Glassmorphic skin with animated borders and blur effects
+- NEW: FPS frame alignment for professional video editors
+- NEW: Start time offset for timeline synchronization
+- NEW: Configurable subtitle gaps
+- NEW: Custom export path support
+- NEW: Enhanced script naming
+- Improved chunk splitting for long sentences
+- Complete UI overhaul
+
+**v1.3.0 – May 2025**
+- Splitting only at full stops for smoother voiceovers
+- Markdown cleanup to remove symbols
+
+**v1.2.0 – Early May 2025**
 - CapCut voiceover block support (450 character chunks)
-- Added Copy Preview icon and New Script reset button
-- Scrollable, consistent layout
+- Copy Preview icon and New Script reset button
 
-v1.0.0 – Initial Release
+**v1.0.0 – Initial Release**
 - SRT generation from script
-- Controls for timing (WPS, min duration, pause padding)
-- Live preview and download support
+- Basic timing controls
 
-ROADMAP
--------
-- Speaker label handling (e.g., “Narrator:”)
-- Auto line-break reflow for readability
-- Light/Dark mode toggle
-- SRT validator (e.g., line length, time overlap)
+## Credits
 
-CREDITS
--------
-Developed by Tarek Tarabichi
+Developed by [2TInteractive](https://2tinteractive.com)
 MIT License – Free to use, modify, and distribute
 
-LICENSE
--------
-This project is licensed under the [MIT License](LICENSE).
+## Feedback & Contributions
 
-FEEDBACK & CONTRIBUTIONS
--------------------------
 Found a bug or want to suggest a feature?
 Submit an issue or pull request at:
 https://github.com/LebToki/ScriptGen
