@@ -1,31 +1,168 @@
 <?php
+/**
+ * ScriptGen - Professional SRT Generator Backend
+ * Version: 2.0.1
+ * 
+ * Handles script processing, SRT generation, and file downloads
+ * with enhanced security and error handling
+ */
+
+// Security headers
 header('Content-Type: application/json; charset=UTF-8');
 header('Cache-Control: no-cache, no-store, must-revalidate');
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: DENY');
+header('X-XSS-Protection: 1; mode=block');
 
+// Error reporting for production
 ini_set('display_errors', 0);
 ini_set('display_startup_errors', 0);
-error_reporting(0);
+error_reporting(E_ALL);
+ini_set('log_errors', 1);
+
+// Request size limit (10MB max)
+$maxInputSize = 10 * 1024 * 1024;
+ini_set('post_max_size', $maxInputSize);
+ini_set('upload_max_filesize', $maxInputSize);
+
+// Rate limiting (simple implementation)
+$rateLimitFile = __DIR__ . '/.rate_limit';
+$rateLimitWindow = 60; // seconds
+$rateLimitMax = 30; // requests per window
+
+function checkRateLimit($rateLimitFile, $rateLimitWindow, $rateLimitMax) {
+    $now = time();
+    $requests = [];
+    
+    if (file_exists($rateLimitFile)) {
+        $data = json_decode(file_get_contents($rateLimitFile), true);
+        if ($data && is_array($data)) {
+            foreach ($data as $timestamp => $count) {
+                if ($now - $timestamp < $rateLimitWindow) {
+                    $requests[$timestamp] = $count;
+                }
+            }
+        }
+    }
+    
+    $totalRequests = array_sum($requests);
+    if ($totalRequests >= $rateLimitMax) {
+        return false;
+    }
+    
+    // Increment counter
+    $requests[$now] = isset($requests[$now]) ? $requests[$now] + 1 : 1;
+    @file_put_contents($rateLimitFile, json_encode($requests));
+    return true;
+}
 
 function cleanOutput($data) {
-    return json_encode($data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+    return json_encode($data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
 }
 
 function stripMarkdown($text) {
     // Remove markdown symbols
-    $text = preg_replace('/[#*_`]+/', '', $text);
+    $text = preg_replace('/[#*_`\[\]()+~|^>-]+/', '', $text);
     // Clean up multiple spaces
     $text = preg_replace('/\s+/', ' ', $text);
+    // Clean up special Unicode whitespace
+    $text = preg_replace('/[\x00-\x1F\x7F]/u', '', $text);
     return trim($text);
 }
 
+/**
+ * Sanitize filename to prevent directory traversal and injection
+ */
+function sanitizeFilename($filename, $default = 'script') {
+    // Remove any path components
+    $filename = basename($filename);
+    // Remove anything except alphanumeric, dash, underscore
+    $filename = preg_replace('/[^a-zA-Z0-9_-]/', '_', $filename);
+    // Remove duplicate underscores
+    $filename = preg_replace('/_+/', '_', $filename);
+    // Limit length
+    $filename = substr($filename, 0, 100);
+    return !empty($filename) ? $filename : $default;
+}
+
+/**
+ * Validate and sanitize export path
+ */
+function validateExportPath($exportPath, $defaultDir) {
+    if (empty($exportPath)) {
+        return [
+            'path' => $defaultDir,
+            'relative' => 'srt_files/',
+            'valid' => true
+        ];
+    }
+    
+    // Resolve the path
+    $realPath = realpath($exportPath);
+    
+    // Security check: ensure path doesn't go outside allowed directories
+    $defaultRealPath = realpath($defaultDir);
+    
+    if ($realPath === false) {
+        // Try to create the directory if it doesn't exist
+        if (is_writable(dirname($exportPath)) && mkdir($exportPath, 0755, true)) {
+            $realPath = realpath($exportPath);
+        }
+    }
+    
+    if ($realPath && is_dir($realPath) && is_writable($realPath)) {
+        // Ensure path is within allowed scope (prevent directory traversal)
+        if ($defaultRealPath && strpos($realPath, $defaultRealPath) !== 0 && strpos($realPath, '/var/www') !== 0 && strpos($realPath, $_SERVER['DOCUMENT_ROOT'] ?? '') !== 0) {
+            // Only allow paths within project or web root
+            return [
+                'path' => $defaultDir,
+                'relative' => 'srt_files/',
+                'valid' => true,
+                'warning' => 'Custom path not allowed, using default'
+            ];
+        }
+        return [
+            'path' => $realPath,
+            'relative' => $exportPath,
+            'valid' => true
+        ];
+    }
+    
+    return [
+        'path' => $defaultDir,
+        'relative' => 'srt_files/',
+        'valid' => true,
+        'warning' => 'Invalid custom path, using default'
+    ];
+}
+
 try {
+    // Rate limiting check
+    if (!checkRateLimit($rateLimitFile, $rateLimitWindow, $rateLimitMax)) {
+        throw new Exception('Rate limit exceeded. Please wait before making another request.');
+    }
+    
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // Check content length
+        $contentLength = $_SERVER['CONTENT_LENGTH'] ?? 0;
+        if ($contentLength > $maxInputSize) {
+            throw new Exception('Request too large. Maximum size is 10MB.');
+        }
+        
         $input = file_get_contents('php://input');
         $data = json_decode($input, true) ?: $_POST;
 
         if (empty($data['script'])) {
             throw new Exception('Script text is required');
         }
+        
+        // Validate script is not too long
+        if (strlen($data['script']) > $maxInputSize) {
+            throw new Exception('Script too long. Maximum size is 10MB.');
+        }
+        
+        // Get preview_only flag
+        $previewOnly = isset($data['preview_only']) && $data['preview_only'] === '1';
 
         $result = processScript(
             $data['script'],
@@ -37,10 +174,11 @@ try {
             floatval($data['fps'] ?? 0),
             floatval($data['start_offset'] ?? 0),
             intval($data['subtitle_gap'] ?? 100),
-            $data['export_path'] ?? ''
+            $data['export_path'] ?? '',
+            $previewOnly
         );
 
-        echo cleanOutput([
+        $response = [
             'success' => true,
             'preview' => $result['srt'],
             'filename' => $result['filename'],
@@ -49,11 +187,17 @@ try {
                 'total_duration' => $result['total_duration'],
                 'word_count' => $result['word_count']
             ],
-            'export_path' => $result['export_path']
-        ]);
+            'export_path' => $result['export_path'],
+            'saved' => !$previewOnly
+        ];
+        
+        echo cleanOutput($response);
         exit;
     } elseif ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['download'])) {
         handleDownload($_GET['download']);
+        exit;
+    } elseif ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['list'])) {
+        listGeneratedFiles();
         exit;
     }
 
@@ -68,7 +212,7 @@ try {
     exit;
 }
 
-function processScript($script, $wpm, $minTime, $punctuationPad, $maxLength, $name = '', $fps = 0, $startOffset = 0, $subtitleGap = 100, $exportPath = '') {
+function processScript($script, $wpm, $minTime, $punctuationPad, $maxLength, $name = '', $fps = 0, $startOffset = 0, $subtitleGap = 100, $exportPath = '', $previewOnly = false) {
     // Validate inputs
     if ($wpm < 0.5 || $wpm > 10) throw new Exception('Invalid words per second value (0.5-10)');
     if ($minTime < 0.5 || $minTime > 10) throw new Exception('Invalid minimum duration (0.5-10s)');
@@ -76,6 +220,10 @@ function processScript($script, $wpm, $minTime, $punctuationPad, $maxLength, $na
     if ($maxLength < 100 || $maxLength > 1000) throw new Exception('Invalid max block length (100-1000)');
     if ($startOffset < 0 || $startOffset > 3600) throw new Exception('Invalid start offset (0-3600s)');
     if ($subtitleGap < 0 || $subtitleGap > 1000) throw new Exception('Invalid subtitle gap (0-1000ms)');
+    
+    // Validate script content
+    if (strlen($script) < 1) throw new Exception('Script is empty');
+    if (strlen($script) > 10 * 1024 * 1024) throw new Exception('Script exceeds maximum size (10MB)');
 
     $script = stripMarkdown($script);
     $chunks = splitIntoChunks($script, $maxLength);
@@ -93,7 +241,7 @@ function processScript($script, $wpm, $minTime, $punctuationPad, $maxLength, $na
         $duration = max($minTime, $wordCount / $wpm);
         
         // Add punctuation pause
-        if (preg_match('/[.!?]$/', $line)) {
+        if (preg_match('/[.!?]$/', trim($line))) {
             $duration += $punctuationPad;
         }
 
@@ -117,38 +265,29 @@ function processScript($script, $wpm, $minTime, $punctuationPad, $maxLength, $na
     $totalDuration = $currentTime - $startOffset - $gapSeconds; // Exclude final gap
 
     // Generate safe filename
-    $safeName = '';
-    if ($name !== '') {
-        $safeName = preg_replace('/[^a-z0-9_-]/i', '_', $name);
-        $safeName = preg_replace('/_+/', '_', $safeName); // Remove duplicate underscores
-        $safeName = trim($safeName, '_');
-    }
+    $safeName = sanitizeFilename($name, '');
     if ($safeName === '') {
         $safeName = 'script_' . date('Y-m-d_H-i-s');
     }
     $filename = $safeName . '.srt';
 
     // Determine export directory
-    $dir = __DIR__ . '/srt_files'; // Default
-    $usedPath = 'srt_files/';
+    $defaultDir = __DIR__ . '/srt_files';
+    $pathValidation = validateExportPath($exportPath, $defaultDir);
+    $dir = $pathValidation['path'];
+    $usedPath = $pathValidation['relative'];
     
-    if (!empty($exportPath)) {
-        // Sanitize and validate custom path
-        $customPath = realpath($exportPath);
-        if ($customPath && is_dir($customPath) && is_writable($customPath)) {
-            $dir = $customPath;
-            $usedPath = $exportPath;
-        }
-    }
-
     // Create directory if it doesn't exist
     if (!is_dir($dir) && !mkdir($dir, 0755, true)) {
         throw new Exception('Could not create output directory');
     }
 
-    $path = "$dir/$filename";
-    if (file_put_contents($path, $srt) === false) {
-        throw new Exception('Could not save SRT file');
+    // Only save file if not preview-only mode
+    if (!$previewOnly) {
+        $path = "$dir/$filename";
+        if (file_put_contents($path, $srt) === false) {
+            throw new Exception('Could not save SRT file');
+        }
     }
 
     return [
@@ -157,7 +296,8 @@ function processScript($script, $wpm, $minTime, $punctuationPad, $maxLength, $na
         'subtitle_count' => $subtitleCount,
         'total_duration' => round($totalDuration, 2),
         'word_count' => $totalWords,
-        'export_path' => $usedPath
+        'export_path' => $usedPath,
+        'warning' => $pathValidation['warning'] ?? null
     ];
 }
 
@@ -244,17 +384,70 @@ function formatTime($seconds) {
  */
 function handleDownload($filename) {
     $dir = __DIR__ . '/srt_files';
-    $safeName = basename($filename); // Prevent directory traversal
+    $safeName = sanitizeFilename($filename); // Prevent directory traversal
     $path = "$dir/$safeName";
 
-    if (!file_exists($path)) {
+    // Verify file exists and is within allowed directory
+    $realPath = realpath($path);
+    if (!$realPath || !file_exists($realPath)) {
         throw new Exception('File not found');
+    }
+    
+    // Ensure file is within allowed directory
+    $realDir = realpath($dir);
+    if (strpos($realPath, $realDir) !== 0) {
+        throw new Exception('Access denied');
     }
 
     header('Content-Type: text/plain; charset=UTF-8');
     header('Content-Disposition: attachment; filename="' . $safeName . '"');
-    header('Content-Length: ' . filesize($path));
+    header('Content-Length: ' . filesize($realPath));
     header('Cache-Control: no-cache');
-    readfile($path);
+    header('X-Content-Type-Options: nosniff');
+    readfile($realPath);
     exit;
+}
+
+/**
+ * List all generated SRT files
+ */
+function listGeneratedFiles() {
+    $dir = __DIR__ . '/srt_files';
+    
+    if (!is_dir($dir)) {
+        echo cleanOutput([
+            'success' => true,
+            'files' => [],
+            'count' => 0
+        ]);
+        return;
+    }
+    
+    $files = [];
+    $scanDir = scandir($dir);
+    
+    if ($scanDir) {
+        foreach ($scanDir as $file) {
+            if ($file !== '.' && $file !== '..' && pathinfo($file, PATHINFO_EXTENSION) === 'srt') {
+                $filePath = "$dir/$file";
+                $files[] = [
+                    'name' => $file,
+                    'size' => filesize($filePath),
+                    'modified' => filemtime($filePath),
+                    'path' => 'srt_files/' . $file
+                ];
+            }
+        }
+    }
+    
+    // Sort by modified time (newest first)
+    usort($files, function($a, $b) {
+        return $b['modified'] - $a['modified'];
+    });
+    
+    echo cleanOutput([
+        'success' => true,
+        'files' => $files,
+        'count' => count($files)
+    ]);
 }
