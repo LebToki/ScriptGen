@@ -802,6 +802,242 @@
       color: var(--accent-secondary);
       text-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
     }
+    
+    /* Validation states */
+    .form-control.is-invalid {
+      border-color: var(--error);
+      box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.15);
+    }
+    
+    .form-control.is-valid {
+      border-color: var(--success);
+      box-shadow: 0 0 0 3px rgba(0, 212, 170, 0.15);
+    }
+    
+    .invalid-feedback {
+      color: var(--error);
+      font-size: 0.75rem;
+      margin-top: 4px;
+      display: none;
+    }
+    
+    .form-group.has-error .invalid-feedback {
+      display: block;
+    }
+    
+    /* Keyboard shortcuts help */
+    .shortcuts-hint {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-align: right;
+      margin-top: 4px;
+    }
+    
+    .kbd {
+      display: inline-block;
+      padding: 2px 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--glass-border);
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.65rem;
+    }
+    
+    /* Recent files panel */
+    .recent-files {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--glass-border);
+    }
+    
+    .recent-files-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    
+    .recent-files-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .recent-files-list {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    
+    .recent-file-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .recent-file-item:hover {
+      background: rgba(0, 0, 0, 0.3);
+      border-color: var(--glass-border-hover);
+    }
+    
+    .recent-file-name {
+      font-size: 0.85rem;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+    }
+    
+    .recent-file-date {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+    
+    .recent-file-actions {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .recent-file-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      transition: var(--transition);
+    }
+    
+    .recent-file-btn:hover {
+      color: var(--accent-primary);
+      background: rgba(74, 144, 226, 0.1);
+    }
+    
+    .recent-file-btn.delete:hover {
+      color: var(--error);
+      background: rgba(231, 76, 60, 0.1);
+    }
+    
+    .empty-recent {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      padding: 20px;
+    }
+    
+    /* Loading spinner for buttons */
+    .btn .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      display: none;
+    }
+    
+    .btn.loading .spinner {
+      display: inline-block;
+    }
+    
+    .btn.loading .btn-text {
+      display: none;
+    }
+    
+    /* Toast notifications */
+    .toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .toast {
+      padding: 14px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-weight: 500;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      animation: slideInRight 0.3s ease-out;
+      backdrop-filter: blur(10px);
+      max-width: 350px;
+    }
+    
+    .toast.success {
+      background: rgba(0, 212, 170, 0.9);
+      color: #fff;
+      border: 1px solid rgba(0, 212, 170, 0.5);
+    }
+    
+    .toast.error {
+      background: rgba(231, 76, 60, 0.9);
+      color: #fff;
+      border: 1px solid rgba(231, 76, 60, 0.5);
+    }
+    
+    .toast.warning {
+      background: rgba(243, 156, 18, 0.9);
+      color: #fff;
+      border: 1px solid rgba(243, 156, 18, 0.5);
+    }
+    
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(100%);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    .toast.removing {
+      animation: slideOutRight 0.3s ease-in forwards;
+    }
+    
+    @keyframes slideOutRight {
+      from {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateX(100%);
+      }
+    }
+    
+    /* Accessibility - focus visible */
+    *:focus-visible {
+      outline: 2px solid var(--accent-primary);
+      outline-offset: 2px;
+    }
+    
+    /* Screen reader only */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
   </style>
 </head>
 <body>
@@ -824,12 +1060,12 @@
         
         <!-- Script Name -->
         <div class="form-group">
-          <label class="form-label">Script Name</label>
+          <label for="scriptName" class="form-label">Script Name</label>
           <div class="input-group">
-            <span class="input-icon">🎯</span>
-            <input type="text" id="scriptName" class="form-control input-with-icon" placeholder="My Video Script" maxlength="100">
+            <span class="input-icon" aria-hidden="true">🎯</span>
+            <input type="text" id="scriptName" class="form-control input-with-icon" placeholder="My Video Script" maxlength="100" aria-describedby="scriptNameHelp">
           </div>
-          <div class="help-text">Names your project and the exported SRT file</div>
+          <div class="help-text" id="scriptNameHelp">Names your project and the exported SRT file</div>
         </div>
         
         <!-- Basic Timing Controls -->
@@ -977,11 +1213,11 @@ The tool will automatically:
         
         <div class="action-bar">
           <div class="button-group">
-            <button id="processBtn" class="btn btn-primary">
-              <span>⚙️</span>
-              <span>Generate SRT</span>
+            <button id="processBtn" class="btn btn-primary" aria-label="Generate SRT subtitle file">
+              <span class="spinner"></span>
+              <span class="btn-text"><span>⚙️</span> Generate SRT</span>
             </button>
-            <button onclick="location.reload()" class="btn btn-secondary">
+            <button onclick="location.reload()" class="btn btn-secondary" aria-label="Start new script">
               <span>🔄</span>
               <span>New Script</span>
             </button>
@@ -1026,8 +1262,14 @@ The tool will automatically:
     </div>
     
     <div class="footer">
-      Made with ❤️ by <a href="https://2tinteractive.com" target="_blank">2TInteractive</a> • <a href="https://github.com/LebToki/ScriptGen" target="_blank">GitHub</a> • MIT License
+      <div class="shortcuts-hint">
+        Keyboard: <span class="kbd">Ctrl</span>+<span class="kbd">Enter</span> to generate • <span class="kbd">Tab</span> to navigate
+      </div>
+      Made with ❤️ by <a href="https://2tinteractive.com" target="_blank" rel="noopener noreferrer">2TInteractive</a> • <a href="https://github.com/LebToki/ScriptGen" target="_blank" rel="noopener noreferrer">GitHub</a> • MIT License
     </div>
+    
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer" role="region" aria-label="Notifications" aria-live="polite"></div>
   </div>
   
   <script>
@@ -1039,6 +1281,7 @@ The tool will automatically:
     const statusMessage = document.getElementById("statusMessage");
     const scriptStats = document.getElementById("scriptStats");
     const previewBadge = document.getElementById("previewBadge");
+    const toastContainer = document.getElementById("toastContainer");
     
     // Input elements
     const scriptInput = document.getElementById("script");
@@ -1052,18 +1295,151 @@ The tool will automatically:
     const maxLengthInput = document.getElementById("maxLength");
     const exportPathInput = document.getElementById("exportPath");
     
+    // Form groups for validation
+    const formGroups = {
+      wpm: wpmInput.closest('.form-group'),
+      min_time: minTimeInput.closest('.form-group'),
+      punctuation_pad: punctuationPadInput.closest('.form-group'),
+      max_length: maxLengthInput.closest('.form-group'),
+      start_offset: startOffsetInput.closest('.form-group'),
+      subtitle_gap: subtitleGapInput.closest('.form-group')
+    };
+    
     let latestFile = "";
     let isProcessing = false;
+    let recentFiles = [];
+    
+    // Toast notification system
+    function showToast(message, type = 'success', duration = 4000) {
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.setAttribute('role', 'alert');
+      toast.textContent = message;
+      
+      toastContainer.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.classList.add('removing');
+        setTimeout(() => toast.remove(), 300);
+      }, duration);
+    }
+    
+    // Form validation
+    function validateForm() {
+      let isValid = true;
+      
+      // Validate WPM
+      const wpm = parseFloat(wpmInput.value);
+      if (isNaN(wpm) || wpm < 0.5 || wpm > 10) {
+        setFieldError(wpmInput, 'Must be between 0.5 and 10');
+        isValid = false;
+      } else {
+        clearFieldError(wpmInput);
+      }
+      
+      // Validate min time
+      const minTime = parseFloat(minTimeInput.value);
+      if (isNaN(minTime) || minTime < 0.5 || minTime > 10) {
+        setFieldError(minTimeInput, 'Must be between 0.5 and 10');
+        isValid = false;
+      } else {
+        clearFieldError(minTimeInput);
+      }
+      
+      // Validate punctuation padding
+      const punctuationPad = parseFloat(punctuationPadInput.value);
+      if (isNaN(punctuationPad) || punctuationPad < 0 || punctuationPad > 2) {
+        setFieldError(punctuationPadInput, 'Must be between 0 and 2');
+        isValid = false;
+      } else {
+        clearFieldError(punctuationPadInput);
+      }
+      
+      // Validate max length
+      const maxLength = parseInt(maxLengthInput.value);
+      if (isNaN(maxLength) || maxLength < 100 || maxLength > 1000) {
+        setFieldError(maxLengthInput, 'Must be between 100 and 1000');
+        isValid = false;
+      } else {
+        clearFieldError(maxLengthInput);
+      }
+      
+      // Validate start offset
+      const startOffset = parseFloat(startOffsetInput.value);
+      if (isNaN(startOffset) || startOffset < 0 || startOffset > 3600) {
+        setFieldError(startOffsetInput, 'Must be between 0 and 3600');
+        isValid = false;
+      } else {
+        clearFieldError(startOffsetInput);
+      }
+      
+      // Validate subtitle gap
+      const subtitleGap = parseInt(subtitleGapInput.value);
+      if (isNaN(subtitleGap) || subtitleGap < 0 || subtitleGap > 1000) {
+        setFieldError(subtitleGapInput, 'Must be between 0 and 1000');
+        isValid = false;
+      } else {
+        clearFieldError(subtitleGapInput);
+      }
+      
+      return isValid;
+    }
+    
+    function setFieldError(input, message) {
+      const group = input.closest('.form-group');
+      if (!group) return;
+      
+      group.classList.add('has-error');
+      input.classList.add('is-invalid');
+      input.classList.remove('is-valid');
+      
+      let feedback = group.querySelector('.invalid-feedback');
+      if (!feedback) {
+        feedback = document.createElement('div');
+        feedback.className = 'invalid-feedback';
+        group.appendChild(feedback);
+      }
+      feedback.textContent = message;
+    }
+    
+    function clearFieldError(input) {
+      const group = input.closest('.form-group');
+      if (!group) return;
+      
+      group.classList.remove('has-error');
+      input.classList.remove('is-invalid');
+      input.classList.add('is-valid');
+    }
     
     // Collapsible panels
     function setupCollapsible(headerId, contentId) {
       const header = document.getElementById(headerId);
       const content = document.getElementById(contentId);
       
-      header.addEventListener("click", () => {
-        header.classList.toggle("active");
-        content.classList.toggle("active");
-      });
+      if (header && content) {
+        header.addEventListener("click", () => {
+          header.classList.toggle("active");
+          content.classList.toggle("active");
+        });
+        
+        // Keyboard accessibility
+        header.setAttribute('role', 'button');
+        header.setAttribute('tabindex', '0');
+        header.setAttribute('aria-expanded', 'false');
+        
+        header.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            header.click();
+          }
+        });
+        
+        // Update aria-expanded on toggle
+        const observer = new MutationObserver(() => {
+          header.setAttribute('aria-expanded', header.classList.contains('active'));
+        });
+        observer.observe(content, { attributeFilter: ['class'] });
+      }
     }
     
     setupCollapsible("advancedTimingHeader", "advancedTimingContent");
@@ -1097,9 +1473,34 @@ The tool will automatically:
       return `${mins}m ${secs}s`;
     }
     
+    function formatFileSize(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    }
+    
+    function formatDate(timestamp) {
+      const date = new Date(timestamp * 1000);
+      const now = new Date();
+      const diff = now - date;
+      
+      if (diff < 60000) return 'Just now';
+      if (diff < 3600000) return Math.floor(diff / 60000) + 'm ago';
+      if (diff < 86400000) return Math.floor(diff / 3600000) + 'h ago';
+      return date.toLocaleDateString();
+    }
+    
     scriptInput.addEventListener("input", updateStats);
     wpmInput.addEventListener("input", updateStats);
     minTimeInput.addEventListener("input", updateStats);
+    
+    // Real-time validation
+    wpmInput.addEventListener('blur', () => validateForm());
+    minTimeInput.addEventListener('blur', () => validateForm());
+    punctuationPadInput.addEventListener('blur', () => validateForm());
+    maxLengthInput.addEventListener('blur', () => validateForm());
+    startOffsetInput.addEventListener('blur', () => validateForm());
+    subtitleGapInput.addEventListener('blur', () => validateForm());
     
     function showStatus(message, type = "success") {
       statusMessage.textContent = message;
@@ -1109,15 +1510,14 @@ The tool will automatically:
       }, 4000);
     }
     
-    function setLoading(loading) {
+    function setLoading(loading, button = processBtn) {
       isProcessing = loading;
-      processBtn.disabled = loading;
+      button.disabled = loading;
+      
       if (loading) {
-        processBtn.classList.add("btn-loading");
-        processBtn.querySelector("span:last-child").textContent = "Processing...";
+        button.classList.add("loading");
       } else {
-        processBtn.classList.remove("btn-loading");
-        processBtn.querySelector("span:last-child").textContent = "Generate SRT";
+        button.classList.remove("loading");
       }
     }
     
@@ -1125,10 +1525,19 @@ The tool will automatically:
       const script = scriptInput.value.trim();
       
       if (!script) {
-        showStatus("Please enter a script to process", "error");
+        showToast('Please enter a script to process', 'error');
         scriptInput.focus();
+        scriptInput.classList.add('is-invalid');
         return;
       }
+      
+      // Validate form
+      if (!validateForm()) {
+        showToast('Please fix the validation errors', 'error');
+        return;
+      }
+      
+      scriptInput.classList.remove('is-invalid');
       
       const wpm = parseFloat(wpmInput.value) || 3;
       const min_time = parseFloat(minTimeInput.value) || 1.5;
@@ -1140,13 +1549,8 @@ The tool will automatically:
       const maxLength = parseInt(maxLengthInput.value) || 450;
       const exportPath = exportPathInput.value.trim();
       
-      if (wpm < 0.5 || wpm > 10) {
-        showStatus("Words per second must be between 0.5 and 10", "error");
-        return;
-      }
-      
       setLoading(true);
-      showStatus("Processing your script...", "success");
+      showToast('Processing your script...', 'success');
       
       const formData = new FormData();
       formData.append("script", script);
@@ -1175,7 +1579,7 @@ The tool will automatically:
         setLoading(false);
         
         if (data.success === false) {
-          showStatus(data.error || "An error occurred", "error");
+          showToast(data.error || 'An error occurred', 'error');
           return;
         }
         
@@ -1193,17 +1597,25 @@ The tool will automatically:
           previewBadge.textContent = "Generated";
         }
         
-        showStatus(`✅ SRT generated! ${data.stats ? `(${data.stats.subtitle_count} subtitles, ${formatDuration(data.stats.total_duration)})` : ''}`, "success");
+        showToast(`✅ SRT generated! ${data.stats ? `(${data.stats.subtitle_count} subtitles, ${formatDuration(data.stats.total_duration)})` : ''}`, 'success');
+        
+        // Show warning if custom path was not used
+        if (data.warning) {
+          showToast(data.warning, 'warning');
+        }
         
         // Scroll preview into view on mobile
         if (window.innerWidth <= 1024) {
           previewBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
         }
+        
+        // Refresh recent files
+        loadRecentFiles();
       })
       .catch(error => {
         setLoading(false);
         console.error("Error:", error);
-        showStatus("Failed to process script. Please try again.", "error");
+        showToast('Failed to process script. Please try again.', 'error');
       });
     }
     
@@ -1211,30 +1623,46 @@ The tool will automatically:
       const text = previewBox.textContent || previewBox.innerText;
       
       if (!text || text.includes("Click \"Generate SRT\"")) {
-        showStatus("Nothing to copy. Please process a script first.", "error");
+        showToast('Nothing to copy. Please process a script first.', 'error');
         return;
       }
       
       navigator.clipboard.writeText(text).then(() => {
-        showStatus("✅ Copied to clipboard!", "success");
-        copyBtn.querySelector("span:last-child").textContent = "Copied!";
-        setTimeout(() => {
-          copyBtn.querySelector("span:last-child").textContent = "Copy All";
-        }, 2000);
+        showToast('✅ Copied to clipboard!', 'success');
       }).catch(err => {
         console.error("Failed to copy:", err);
-        showStatus("Failed to copy. Please try again.", "error");
+        showToast('Failed to copy. Please try again.', 'error');
       });
     }
     
     function downloadSRT() {
       if (!latestFile) {
-        showStatus("No file available to download", "error");
+        showToast('No file available to download', 'error');
         return;
       }
       
       window.location.href = "generate_srt.php?download=" + encodeURIComponent(latestFile);
-      showStatus("⬇️ Download started...", "success");
+      showToast('⬇️ Download started...', 'success');
+    }
+    
+    // Load recent files from server
+    function loadRecentFiles() {
+      fetch('generate_srt.php?list=1')
+        .then(response => response.json())
+        .then(data => {
+          if (data.success && data.files) {
+            recentFiles = data.files.slice(0, 10); // Keep only 10 most recent
+            renderRecentFiles();
+          }
+        })
+        .catch(err => {
+          console.error('Failed to load recent files:', err);
+        });
+    }
+    
+    function renderRecentFiles() {
+      // This function can be expanded to show recent files in UI
+      // For now we just store them in memory
     }
     
     // Event listeners
@@ -1250,8 +1678,19 @@ The tool will automatically:
       }
     });
     
+    // Enter key in form inputs processes script (except in textarea)
+    document.querySelectorAll('.form-control:not(textarea)').forEach(input => {
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          processScript();
+        }
+      });
+    });
+    
     // Initialize
     updateStats();
+    loadRecentFiles();
   </script>
 </body>
 </html>
