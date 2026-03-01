@@ -1,7 +1,7 @@
 <?php
 /**
  * ScriptGen - Professional SRT Generator Backend
- * Version: 2.0.1
+ * Version: 2.1.0
  * 
  * Handles script processing, SRT generation, and file downloads
  * with enhanced security and error handling
@@ -175,7 +175,10 @@ try {
             floatval($data['start_offset'] ?? 0),
             intval($data['subtitle_gap'] ?? 100),
             $data['export_path'] ?? '',
-            $previewOnly
+            $previewOnly,
+            $data['capcut_mode'] ?? false,
+            $data['capcut_template'] ?? 'standard',
+            $data['capcut_style'] ?? 'default'
         );
 
         $response = [
@@ -212,7 +215,7 @@ try {
     exit;
 }
 
-function processScript($script, $wpm, $minTime, $punctuationPad, $maxLength, $name = '', $fps = 0, $startOffset = 0, $subtitleGap = 100, $exportPath = '', $previewOnly = false) {
+function processScript($script, $wpm, $minTime, $punctuationPad, $maxLength, $name = '', $fps = 0, $startOffset = 0, $subtitleGap = 100, $exportPath = '', $previewOnly = false, $capcutMode = false, $capcutTemplate = 'standard', $capcutStyle = 'default') {
     // Validate inputs
     if ($wpm < 0.5 || $wpm > 10) throw new Exception('Invalid words per second value (0.5-10)');
     if ($minTime < 0.5 || $minTime > 10) throw new Exception('Invalid minimum duration (0.5-10s)');
@@ -235,6 +238,14 @@ function processScript($script, $wpm, $minTime, $punctuationPad, $maxLength, $na
     $totalWords = 0;
     $gapSeconds = $subtitleGap / 1000; // Convert ms to seconds
 
+    // CapCut-specific optimizations
+    if ($capcutMode) {
+        // CapCut optimal settings
+        $minTime = max($minTime, 1.0); // Minimum 1 second for CapCut
+        $wpm = max($wpm, 2.5); // Slower pace for mobile viewing
+        $maxLength = min($maxLength, 60); // Shorter lines for mobile screens
+    }
+
     foreach ($chunks as $line) {
         $wordCount = str_word_count($line);
         $totalWords += $wordCount;
@@ -243,6 +254,15 @@ function processScript($script, $wpm, $minTime, $punctuationPad, $maxLength, $na
         // Add punctuation pause
         if (preg_match('/[.!?]$/', trim($line))) {
             $duration += $punctuationPad;
+        }
+
+        // CapCut-specific timing adjustments
+        if ($capcutMode) {
+            // Ensure minimum visibility for mobile screens
+            $duration = max($duration, 1.2);
+            
+            // Add slight padding for better readability
+            $duration += 0.2;
         }
 
         // Align to frame boundary if FPS is set
@@ -254,7 +274,13 @@ function processScript($script, $wpm, $minTime, $punctuationPad, $maxLength, $na
         $start = formatTime($currentTime);
         $end = formatTime($currentTime + $duration);
 
-        $srt .= "$index\n$start --> $end\n$line\n\n";
+        // Apply CapCut formatting
+        if ($capcutMode) {
+            $formattedLine = applyCapCutFormatting($line, $capcutTemplate, $capcutStyle);
+            $srt .= "$index\n$start --> $end\n$formattedLine\n\n";
+        } else {
+            $srt .= "$index\n$start --> $end\n$line\n\n";
+        }
         
         // Move to next subtitle with gap
         $currentTime += $duration + $gapSeconds;
@@ -406,6 +432,140 @@ function handleDownload($filename) {
     header('X-Content-Type-Options: nosniff');
     readfile($realPath);
     exit;
+}
+
+/**
+ * Apply CapCut-specific formatting to subtitle text
+ */
+function applyCapCutFormatting($text, $template = 'standard', $style = 'default') {
+    // Remove any existing formatting
+    $text = strip_tags($text);
+    $text = trim($text);
+    
+    // Template-specific formatting
+    switch ($template) {
+        case 'social_media':
+            // Add emojis for social media engagement
+            $text = addSocialMediaEmojis($text);
+            break;
+        case 'educational':
+            // Add emphasis for educational content
+            $text = addEducationalFormatting($text);
+            break;
+        case 'entertainment':
+            // Add fun formatting for entertainment
+            $text = addEntertainmentFormatting($text);
+            break;
+        default:
+            // Standard CapCut formatting
+            $text = addStandardCapCutFormatting($text);
+    }
+    
+    // Style-specific enhancements
+    switch ($style) {
+        case 'bold':
+            $text = addBoldFormatting($text);
+            break;
+        case 'italic':
+            $text = addItalicFormatting($text);
+            break;
+        case 'highlight':
+            $text = addHighlightFormatting($text);
+            break;
+    }
+    
+    return $text;
+}
+
+/**
+ * Add social media emojis to text
+ */
+function addSocialMediaEmojis($text) {
+    // Add relevant emojis based on content
+    $emojis = [
+        '!' => '🔥',
+        '?' => '🤔',
+        'love' => '❤️',
+        'amazing' => '✨',
+        'cool' => '😎',
+        'fun' => '🎉',
+        'great' => '👍',
+        'best' => '🏆'
+    ];
+    
+    foreach ($emojis as $word => $emoji) {
+        if (stripos($text, $word) !== false) {
+            $text .= ' ' . $emoji;
+            break; // Only add one emoji per subtitle
+        }
+    }
+    
+    return $text;
+}
+
+/**
+ * Add educational formatting
+ */
+function addEducationalFormatting($text) {
+    // Add numbering or bullet points for educational content
+    if (preg_match('/^(step|tip|fact|note|remember|important)/i', $text)) {
+        $text = '📌 ' . $text;
+    } elseif (preg_match('/^(first|second|third|next|then)/i', $text)) {
+        $text = '➡️ ' . $text;
+    }
+    
+    return $text;
+}
+
+/**
+ * Add entertainment formatting
+ */
+function addEntertainmentFormatting($text) {
+    // Add fun elements for entertainment content
+    if (preg_match('/(fun|exciting|awesome|cool)/i', $text)) {
+        $text = '🎬 ' . $text . ' 🎬';
+    }
+    
+    return $text;
+}
+
+/**
+ * Add standard CapCut formatting
+ */
+function addStandardCapCutFormatting($text) {
+    // Ensure proper capitalization and punctuation
+    $text = ucfirst(strtolower($text));
+    
+    // Add proper ending punctuation if missing
+    if (!preg_match('/[.!?]$/', $text)) {
+        $text .= '.';
+    }
+    
+    return $text;
+}
+
+/**
+ * Add bold formatting for emphasis
+ */
+function addBoldFormatting($text) {
+    // Convert to CapCut bold format (using asterisks)
+    return '**' . $text . '**';
+}
+
+/**
+ * Add italic formatting
+ */
+function addItalicFormatting($text) {
+    // Convert to CapCut italic format (using underscores)
+    return '_' . $text . '_';
+}
+
+/**
+ * Add highlight formatting
+ */
+function addHighlightFormatting($text) {
+    // Convert to CapCut highlight format (using backticks)
+    return '`' . $text . '`';
 }
 
 /**

@@ -994,6 +994,13 @@
       border: 1px solid rgba(243, 156, 18, 0.5);
     }
     
+    .toast.capcut {
+      background: linear-gradient(135deg, rgba(255, 107, 129, 0.9), rgba(255, 183, 62, 0.9));
+      color: #fff;
+      border: 1px solid rgba(255, 107, 129, 0.5);
+      box-shadow: 0 8px 32px rgba(255, 107, 129, 0.3);
+    }
+    
     @keyframes slideInRight {
       from {
         opacity: 0;
@@ -1020,6 +1027,204 @@
       }
     }
     
+    /* CapCut Integration Styles */
+    .capcut-badge {
+      background: linear-gradient(135deg, #ff6b81, #ffb73e);
+      color: #fff;
+      border: 1px solid rgba(255, 107, 129, 0.5);
+      box-shadow: 0 0 15px rgba(255, 107, 129, 0.3);
+      animation: capcutPulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes capcutPulse {
+      0%, 100% { box-shadow: 0 0 15px rgba(255, 107, 129, 0.3); }
+      50% { box-shadow: 0 0 25px rgba(255, 107, 129, 0.6); }
+    }
+    
+    .capcut-section {
+      border: 1px solid rgba(255, 107, 129, 0.3);
+      background: rgba(255, 107, 129, 0.05);
+      box-shadow: 0 0 20px rgba(255, 107, 129, 0.1);
+    }
+    
+    .capcut-header {
+      background: linear-gradient(135deg, rgba(255, 107, 129, 0.1), rgba(255, 183, 62, 0.1));
+      border: 1px solid rgba(255, 107, 129, 0.3);
+      color: #fff;
+    }
+    
+    .capcut-btn {
+      background: linear-gradient(135deg, #ff6b81, #ffb73e);
+      color: #fff;
+      border: 1px solid rgba(255, 107, 129, 0.5);
+      box-shadow: 0 4px 20px rgba(255, 107, 129, 0.3);
+    }
+    
+    .capcut-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(255, 107, 129, 0.4), 0 0 40px rgba(255, 107, 129, 0.2);
+    }
+    
+    /* Video Preview Styles */
+    .video-preview-container {
+      position: relative;
+      background: #000;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--glass-border);
+      min-height: 200px;
+    }
+    
+    .video-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.5);
+      border-top: 1px solid var(--glass-border);
+    }
+    
+    .video-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--glass-border);
+      color: var(--text-primary);
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .video-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: var(--glass-border-hover);
+    }
+    
+    .timeline-container {
+      height: 60px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--glass-border);
+      border-top: none;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .timeline-track {
+      position: absolute;
+      top: 20px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent-primary);
+      opacity: 0.3;
+    }
+    
+    .timeline-marker {
+      position: absolute;
+      top: 10px;
+      width: 2px;
+      height: 40px;
+      background: var(--accent-primary);
+      opacity: 0.8;
+    }
+    
+    .subtitle-overlay {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.8);
+      padding: 10px 20px;
+      border-radius: 20px;
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      text-align: center;
+      max-width: 80%;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    /* Enhanced Stats Display */
+    .enhanced-stats {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+    
+    .stat-card {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      text-align: center;
+      transition: var(--transition);
+    }
+    
+    .stat-card:hover {
+      background: rgba(0, 0, 0, 0.3);
+      border-color: var(--glass-border-hover);
+    }
+    
+    .stat-value-large {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--accent-primary);
+    }
+    
+    .stat-label-small {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    /* Template Selector */
+    .template-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+    
+    .template-card {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      cursor: pointer;
+      transition: var(--transition);
+      text-align: center;
+    }
+    
+    .template-card:hover {
+      background: rgba(0, 0, 0, 0.3);
+      border-color: var(--accent-primary);
+    }
+    
+    .template-card.active {
+      border-color: var(--accent-primary);
+      background: rgba(74, 144, 226, 0.1);
+      box-shadow: 0 0 15px rgba(74, 144, 226, 0.2);
+    }
+    
+    .template-icon {
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+      display: block;
+    }
+    
+    .template-name {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    
+    .template-desc {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    
     /* Accessibility - focus visible */
     *:focus-visible {
       outline: 2px solid var(--accent-primary);
@@ -1037,6 +1242,64 @@
       clip: rect(0, 0, 0, 0);
       white-space: nowrap;
       border: 0;
+    }
+    
+    /* Switch component for CapCut mode */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+    
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--glass-border);
+      transition: .4s;
+      border-radius: 24px;
+    }
+    
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    input:checked + .slider {
+      background: linear-gradient(135deg, #ff6b81, #ffb73e);
+      border-color: rgba(255, 107, 129, 0.5);
+    }
+    
+    input:checked + .slider:before {
+      transform: translateX(20px);
+      background-color: #fff;
+    }
+    
+    .slider.round {
+      border-radius: 34px;
+    }
+    
+    .slider.round:before {
+      border-radius: 50%;
     }
   </style>
 </head>
@@ -1158,6 +1421,96 @@
                   <span class="input-icon">📏</span>
                   <input type="number" id="maxLength" class="form-control input-with-icon" value="450" step="10" min="100" max="1000">
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- CapCut Integration -->
+        <div class="collapsible-header capcut-header" id="capcutHeader">
+          <div class="collapsible-title">
+            <span>🎬</span>
+            <span>CapCut Integration</span>
+            <span class="badge capcut-badge" style="margin-left: 8px;">NEW</span>
+          </div>
+          <span class="collapsible-icon">▼</span>
+        </div>
+        <div class="collapsible-content capcut-section" id="capcutContent">
+          <div class="collapsible-body">
+            <div class="form-group">
+              <label class="form-label">
+                <span class="tooltip" data-tooltip="Enable CapCut-specific optimizations for mobile video editing">
+                  CapCut Mode
+                </span>
+              </label>
+              <div class="input-group">
+                <label class="switch" style="margin: 0;">
+                  <input type="checkbox" id="capcutMode">
+                  <span class="slider"></span>
+                </label>
+                <span style="margin-left: 12px; color: var(--text-muted); font-size: 0.85rem;">Optimize for CapCut mobile editing</span>
+              </div>
+            </div>
+            
+            <div class="section-divider" style="margin: 20px 0;">CapCut Templates</div>
+            <div class="template-grid">
+              <div class="template-card active" data-template="standard">
+                <span class="template-icon">📝</span>
+                <div class="template-name">Standard</div>
+                <div class="template-desc">Clean, professional subtitles</div>
+              </div>
+              <div class="template-card" data-template="social_media">
+                <span class="template-icon">📱</span>
+                <div class="template-name">Social Media</div>
+                <div class="template-desc">Engaging with emojis</div>
+              </div>
+              <div class="template-card" data-template="educational">
+                <span class="template-icon">🎓</span>
+                <div class="template-name">Educational</div>
+                <div class="template-desc">Informative & clear</div>
+              </div>
+            </div>
+            
+            <div class="section-divider" style="margin: 20px 0;">CapCut Styles</div>
+            <div class="controls-grid">
+              <div class="form-group">
+                <label class="form-label">Text Style</label>
+                <select id="capcutStyle" class="form-control">
+                  <option value="default" selected>Default</option>
+                  <option value="bold">Bold</option>
+                  <option value="italic">Italic</option>
+                  <option value="highlight">Highlight</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label">Font Size</label>
+                <div class="input-group">
+                  <span class="input-icon">🔤</span>
+                  <input type="range" id="capcutFontSize" class="form-control" min="12" max="24" value="16" step="1">
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label">Text Color</label>
+                <input type="color" id="capcutColor" class="form-control" value="#ffffff">
+              </div>
+            </div>
+            
+            <div class="section-divider" style="margin: 20px 0;">CapCut Preview</div>
+            <div class="video-preview-container">
+              <div id="capcutPreview" class="subtitle-overlay" style="display: none;">
+                Sample subtitle text preview
+              </div>
+              <div class="timeline-container">
+                <div class="timeline-track"></div>
+                <div class="timeline-marker" id="timelineMarker" style="left: 0%;"></div>
+              </div>
+              <div class="video-controls">
+                <button class="video-btn" id="previewPlayBtn">▶️ Play</button>
+                <button class="video-btn" id="previewPauseBtn">⏸️ Pause</button>
+                <button class="video-btn" id="previewStopBtn">⏹️ Stop</button>
+                <span style="margin-left: auto; color: var(--text-muted); font-size: 0.8rem;">Mobile-optimized preview</span>
               </div>
             </div>
           </div>
@@ -1444,6 +1797,7 @@ The tool will automatically:
     
     setupCollapsible("advancedTimingHeader", "advancedTimingContent");
     setupCollapsible("exportSettingsHeader", "exportSettingsContent");
+    setupCollapsible("capcutHeader", "capcutContent");
     
     // Update stats as user types
     function updateStats() {
@@ -1549,6 +1903,11 @@ The tool will automatically:
       const maxLength = parseInt(maxLengthInput.value) || 450;
       const exportPath = exportPathInput.value.trim();
       
+      // CapCut-specific parameters
+      const capcutMode = document.getElementById('capcutMode').checked;
+      const capcutTemplate = document.querySelector('.template-card.active')?.dataset.template || 'standard';
+      const capcutStyle = document.getElementById('capcutStyle').value;
+      
       setLoading(true);
       showToast('Processing your script...', 'success');
       
@@ -1564,6 +1923,9 @@ The tool will automatically:
       formData.append("max_length", maxLength);
       formData.append("export_path", exportPath);
       formData.append("preview_only", "1");
+      formData.append("capcut_mode", capcutMode ? "1" : "0");
+      formData.append("capcut_template", capcutTemplate);
+      formData.append("capcut_style", capcutStyle);
       
       fetch("generate_srt.php", {
         method: "POST",
@@ -1691,6 +2053,193 @@ The tool will automatically:
     // Initialize
     updateStats();
     loadRecentFiles();
+    
+    // CapCut Integration Setup
+    setupCapCutIntegration();
+    
+    function setupCapCutIntegration() {
+      const capcutMode = document.getElementById('capcutMode');
+      const capcutStyle = document.getElementById('capcutStyle');
+      const capcutFontSize = document.getElementById('capcutFontSize');
+      const capcutColor = document.getElementById('capcutColor');
+      const capcutPreview = document.getElementById('capcutPreview');
+      const timelineMarker = document.getElementById('timelineMarker');
+      const previewPlayBtn = document.getElementById('previewPlayBtn');
+      const previewPauseBtn = document.getElementById('previewPauseBtn');
+      const previewStopBtn = document.getElementById('previewStopBtn');
+      
+      // Template selection
+      const templateCards = document.querySelectorAll('.template-card');
+      templateCards.forEach(card => {
+        card.addEventListener('click', () => {
+          templateCards.forEach(c => c.classList.remove('active'));
+          card.classList.add('active');
+          showToast(`CapCut template: ${card.querySelector('.template-name').textContent}`, 'capcut');
+        });
+      });
+      
+      // CapCut mode toggle
+      capcutMode.addEventListener('change', () => {
+        if (capcutMode.checked) {
+          showToast('CapCut mode enabled - optimized for mobile editing', 'capcut');
+          // Apply CapCut-specific timing adjustments
+          if (parseFloat(minTimeInput.value) < 1.0) {
+            minTimeInput.value = 1.0;
+          }
+          if (parseFloat(wpmInput.value) < 2.5) {
+            wpmInput.value = 2.5;
+          }
+          if (parseInt(maxLengthInput.value) > 60) {
+            maxLengthInput.value = 60;
+          }
+          updateStats();
+        } else {
+          showToast('CapCut mode disabled', 'success');
+        }
+      });
+      
+      // Style changes
+      capcutStyle.addEventListener('change', () => {
+        updateCapCutPreview();
+      });
+      
+      capcutFontSize.addEventListener('input', () => {
+        capcutPreview.style.fontSize = `${capcutFontSize.value}px`;
+      });
+      
+      capcutColor.addEventListener('input', () => {
+        capcutPreview.style.color = capcutColor.value;
+      });
+      
+      // Preview controls
+      let previewInterval;
+      let isPlaying = false;
+      let currentSubtitleIndex = 0;
+      
+      previewPlayBtn.addEventListener('click', () => {
+        if (!isPlaying) {
+          startPreview();
+        }
+      });
+      
+      previewPauseBtn.addEventListener('click', () => {
+        pausePreview();
+      });
+      
+      previewStopBtn.addEventListener('click', () => {
+        stopPreview();
+      });
+      
+      function startPreview() {
+        if (previewBox.textContent.includes('Click "Generate SRT"')) {
+          showToast('Please generate SRT first', 'warning');
+          return;
+        }
+        
+        isPlaying = true;
+        previewPlayBtn.disabled = true;
+        previewPauseBtn.disabled = false;
+        previewStopBtn.disabled = false;
+        
+        const subtitles = parseSubtitles(previewBox.textContent);
+        if (subtitles.length === 0) {
+          showToast('No subtitles to preview', 'warning');
+          return;
+        }
+        
+        currentSubtitleIndex = 0;
+        capcutPreview.style.display = 'block';
+        capcutPreview.textContent = subtitles[0].text;
+        
+        previewInterval = setInterval(() => {
+          currentSubtitleIndex++;
+          if (currentSubtitleIndex >= subtitles.length) {
+            stopPreview();
+            return;
+          }
+          
+          capcutPreview.textContent = subtitles[currentSubtitleIndex].text;
+          const progress = (currentSubtitleIndex / subtitles.length) * 100;
+          timelineMarker.style.left = `${progress}%`;
+        }, 2000); // Change subtitle every 2 seconds
+      }
+      
+      function pausePreview() {
+        if (isPlaying) {
+          isPlaying = false;
+          clearInterval(previewInterval);
+          previewPlayBtn.disabled = false;
+          previewPauseBtn.disabled = true;
+          showToast('Preview paused', 'success');
+        }
+      }
+      
+      function stopPreview() {
+        isPlaying = false;
+        clearInterval(previewInterval);
+        previewPlayBtn.disabled = false;
+        previewPauseBtn.disabled = true;
+        previewStopBtn.disabled = true;
+        capcutPreview.style.display = 'none';
+        timelineMarker.style.left = '0%';
+        showToast('Preview stopped', 'success');
+      }
+      
+      function parseSubtitles(srtText) {
+        const subtitles = [];
+        const blocks = srtText.split('\n\n');
+        
+        blocks.forEach(block => {
+          const lines = block.split('\n');
+          if (lines.length >= 3) {
+            const text = lines.slice(2).join(' ').trim();
+            if (text) {
+              subtitles.push({ text });
+            }
+          }
+        });
+        
+        return subtitles;
+      }
+      
+      function updateCapCutPreview() {
+        const selectedTemplate = document.querySelector('.template-card.active')?.dataset.template || 'standard';
+        const style = capcutStyle.value;
+        
+        let sampleText = "Sample CapCut subtitle text";
+        
+        // Apply template formatting
+        switch (selectedTemplate) {
+          case 'social_media':
+            sampleText = "🔥 " + sampleText + " 🎉";
+            break;
+          case 'educational':
+            sampleText = "📌 " + sampleText;
+            break;
+          case 'entertainment':
+            sampleText = "🎬 " + sampleText + " 🎬";
+            break;
+        }
+        
+        // Apply style formatting
+        switch (style) {
+          case 'bold':
+            sampleText = "**" + sampleText + "**";
+            break;
+          case 'italic':
+            sampleText = "_" + sampleText + "_";
+            break;
+          case 'highlight':
+            sampleText = "`" + sampleText + "`";
+            break;
+        }
+        
+        capcutPreview.textContent = sampleText;
+      }
+      
+      // Initialize CapCut preview
+      updateCapCutPreview();
+    }
   </script>
 </body>
 </html>
