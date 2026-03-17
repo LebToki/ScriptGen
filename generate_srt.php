@@ -398,10 +398,13 @@ function splitIntoChunks($text, $maxLength = 450) {
  * Format seconds to SRT time format (HH:MM:SS,mmm)
  */
 function formatTime($seconds) {
-    $h = floor($seconds / 3600);
-    $m = floor(($seconds % 3600) / 60);
-    $s = floor($seconds % 60);
-    $ms = round(($seconds - floor($seconds)) * 1000);
+    $totalMs = round($seconds * 1000);
+    $h = floor($totalMs / 3600000);
+    $totalMs %= 3600000;
+    $m = floor($totalMs / 60000);
+    $totalMs %= 60000;
+    $s = floor($totalMs / 1000);
+    $ms = $totalMs % 1000;
     return sprintf("%02d:%02d:%02d,%03d", $h, $m, $s, $ms);
 }
 
