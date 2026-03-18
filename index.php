@@ -1807,7 +1807,10 @@ The tool will automatically:
         return;
       }
       
-      const words = script.split(/\s+/).filter(w => w.length > 0).length;
+      // ⚡ Bolt Optimization: Use regex match instead of split/filter for faster word counting
+      // Reduces array allocations and improves performance on large texts during rapid typing
+      const match = script.match(/\S+/g);
+      const words = match ? match.length : 0;
       const chars = script.length;
       const wpm = parseFloat(wpmInput.value) || 3;
       const minTime = parseFloat(minTimeInput.value) || 1.5;
