@@ -1335,7 +1335,7 @@
         <div class="section-divider">Timing Controls</div>
         <div class="controls-grid">
           <div class="form-group">
-            <label class="form-label tooltip" data-tooltip="Words spoken per second">
+            <label for="wpm" class="form-label tooltip" data-tooltip="Words spoken per second">
               Words/Second
             </label>
             <div class="input-group">
@@ -1345,7 +1345,7 @@
           </div>
           
           <div class="form-group">
-            <label class="form-label tooltip" data-tooltip="Minimum subtitle duration">
+            <label for="min_time" class="form-label tooltip" data-tooltip="Minimum subtitle duration">
               Min Duration (s)
             </label>
             <div class="input-group">
@@ -1355,7 +1355,7 @@
           </div>
           
           <div class="form-group">
-            <label class="form-label tooltip" data-tooltip="Pause after punctuation">
+            <label for="punctuation_pad" class="form-label tooltip" data-tooltip="Pause after punctuation">
               Pause Padding (s)
             </label>
             <div class="input-group">
@@ -1377,7 +1377,7 @@
           <div class="collapsible-body">
             <div class="controls-grid controls-grid-4">
               <div class="form-group">
-                <label class="form-label tooltip" data-tooltip="Frame rate for timing alignment">
+                <label for="fps" class="form-label tooltip" data-tooltip="Frame rate for timing alignment">
                   Frame Rate (FPS)
                 </label>
                 <select id="fps" class="form-control">
@@ -1394,7 +1394,7 @@
               </div>
               
               <div class="form-group">
-                <label class="form-label tooltip" data-tooltip="Offset for all timecodes">
+                <label for="startOffset" class="form-label tooltip" data-tooltip="Offset for all timecodes">
                   Start Offset (s)
                 </label>
                 <div class="input-group">
@@ -1404,7 +1404,7 @@
               </div>
               
               <div class="form-group">
-                <label class="form-label tooltip" data-tooltip="Minimum gap between subtitles">
+                <label for="subtitleGap" class="form-label tooltip" data-tooltip="Minimum gap between subtitles">
                   Subtitle Gap (ms)
                 </label>
                 <div class="input-group">
@@ -1414,7 +1414,7 @@
               </div>
               
               <div class="form-group">
-                <label class="form-label tooltip" data-tooltip="Maximum characters per block">
+                <label for="maxLength" class="form-label tooltip" data-tooltip="Maximum characters per block">
                   Max Block Length
                 </label>
                 <div class="input-group">
@@ -1438,7 +1438,7 @@
         <div class="collapsible-content capcut-section" id="capcutContent">
           <div class="collapsible-body">
             <div class="form-group">
-              <label class="form-label">
+              <label for="capcutMode" class="form-label">
                 <span class="tooltip" data-tooltip="Enable CapCut-specific optimizations for mobile video editing">
                   CapCut Mode
                 </span>
@@ -1474,7 +1474,7 @@
             <div class="section-divider" style="margin: 20px 0;">CapCut Styles</div>
             <div class="controls-grid">
               <div class="form-group">
-                <label class="form-label">Text Style</label>
+                <label for="capcutStyle" class="form-label">Text Style</label>
                 <select id="capcutStyle" class="form-control">
                   <option value="default" selected>Default</option>
                   <option value="bold">Bold</option>
@@ -1484,7 +1484,7 @@
               </div>
               
               <div class="form-group">
-                <label class="form-label">Font Size</label>
+                <label for="capcutFontSize" class="form-label">Font Size</label>
                 <div class="input-group">
                   <span class="input-icon">🔤</span>
                   <input type="range" id="capcutFontSize" class="form-control" min="12" max="24" value="16" step="1">
@@ -1492,7 +1492,7 @@
               </div>
               
               <div class="form-group">
-                <label class="form-label">Text Color</label>
+                <label for="capcutColor" class="form-label">Text Color</label>
                 <input type="color" id="capcutColor" class="form-control" value="#ffffff">
               </div>
             </div>
@@ -1527,7 +1527,7 @@
         <div class="collapsible-content" id="exportSettingsContent">
           <div class="collapsible-body">
             <div class="form-group">
-              <label class="form-label">Export Path</label>
+              <label for="exportPath" class="form-label">Export Path</label>
               <div class="path-input-wrapper">
                 <input type="text" id="exportPath" class="form-control" placeholder="Default: srt_files/">
               </div>
@@ -1539,7 +1539,7 @@
         <!-- Script Content -->
         <div class="section-divider">Script Content</div>
         <div class="form-group">
-          <label class="form-label form-label-required">Your Script</label>
+          <label for="script" class="form-label form-label-required">Your Script</label>
           <textarea id="script" class="form-control" placeholder="Paste your script here...
 
 The tool will automatically:
