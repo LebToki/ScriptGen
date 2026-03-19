@@ -1443,28 +1443,28 @@
                   CapCut Mode
                 </span>
               </label>
-              <div class="input-group">
+              <div class="input-group" style="display: flex; align-items: center;">
                 <label class="switch" style="margin: 0;">
                   <input type="checkbox" id="capcutMode">
                   <span class="slider"></span>
                 </label>
-                <span style="margin-left: 12px; color: var(--text-muted); font-size: 0.85rem;">Optimize for CapCut mobile editing</span>
+                <label for="capcutMode" style="margin-left: 12px; color: var(--text-muted); font-size: 0.85rem; cursor: pointer;">Optimize for CapCut mobile editing</label>
               </div>
             </div>
             
             <div class="section-divider" style="margin: 20px 0;">CapCut Templates</div>
             <div class="template-grid">
-              <div class="template-card active" data-template="standard">
+              <div class="template-card active" data-template="standard" tabindex="0" role="button" aria-pressed="true">
                 <span class="template-icon">📝</span>
                 <div class="template-name">Standard</div>
                 <div class="template-desc">Clean, professional subtitles</div>
               </div>
-              <div class="template-card" data-template="social_media">
+              <div class="template-card" data-template="social_media" tabindex="0" role="button" aria-pressed="false">
                 <span class="template-icon">📱</span>
                 <div class="template-name">Social Media</div>
                 <div class="template-desc">Engaging with emojis</div>
               </div>
-              <div class="template-card" data-template="educational">
+              <div class="template-card" data-template="educational" tabindex="0" role="button" aria-pressed="false">
                 <span class="template-icon">🎓</span>
                 <div class="template-name">Educational</div>
                 <div class="template-desc">Informative & clear</div>
@@ -1591,7 +1591,7 @@ The tool will automatically:
         </div>
         
         <div class="preview-container">
-          <div id="previewBox" class="preview-box" contenteditable="false">
+          <div id="previewBox" class="preview-box" contenteditable="false" tabindex="0" aria-label="Generated Subtitles Preview">
             <div class="preview-empty">
               <div class="preview-empty-icon">📋</div>
               <div class="preview-empty-text">Click "Generate SRT" to create your subtitle file</div>
@@ -2106,10 +2106,24 @@ The tool will automatically:
       // Template selection
       const templateCards = document.querySelectorAll('.template-card');
       templateCards.forEach(card => {
-        card.addEventListener('click', () => {
-          templateCards.forEach(c => c.classList.remove('active'));
+        const selectTemplate = () => {
+          templateCards.forEach(c => {
+            c.classList.remove('active');
+            c.setAttribute('aria-pressed', 'false');
+          });
           card.classList.add('active');
+          card.setAttribute('aria-pressed', 'true');
+          updateCapCutPreview();
           showToast(`CapCut template: ${card.querySelector('.template-name').textContent}`, 'capcut');
+        };
+
+        card.addEventListener('click', selectTemplate);
+
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            selectTemplate();
+          }
         });
       });
       
