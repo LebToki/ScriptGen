@@ -76,8 +76,8 @@ function stripMarkdown($text) {
 function sanitizeFilename($filename, $default = 'script') {
     // Remove any path components
     $filename = basename($filename);
-    // Remove anything except alphanumeric, dash, underscore
-    $filename = preg_replace('/[^a-zA-Z0-9_-]/', '_', $filename);
+    // Remove anything except alphanumeric, dash, underscore, and period
+    $filename = preg_replace('/[^a-zA-Z0-9_.-]/', '_', $filename);
     // Remove duplicate underscores
     $filename = preg_replace('/_+/', '_', $filename);
     // Limit length
@@ -97,42 +97,46 @@ function validateExportPath($exportPath, $defaultDir) {
         ];
     }
     
-    // Resolve the path
-    $realPath = realpath($exportPath);
-    
-    // Security check: ensure path doesn't go outside allowed directories
     $defaultRealPath = realpath($defaultDir);
+    if (!$defaultRealPath) {
+        if (!is_dir($defaultDir)) {
+            mkdir($defaultDir, 0755, true);
+        }
+        $defaultRealPath = realpath($defaultDir);
+    }
+
+    // Sanitize the requested path to prevent directory traversal
+    $safePath = preg_replace('/[^a-zA-Z0-9_\-\/]/', '', $exportPath);
+    $safePath = trim(str_replace('..', '', $safePath), '/');
+
+    $targetPath = $defaultDir . '/' . $safePath;
     
-    if ($realPath === false) {
-        // Try to create the directory if it doesn't exist
-        if (is_writable(dirname($exportPath)) && mkdir($exportPath, 0755, true)) {
-            $realPath = realpath($exportPath);
+    // Ensure path is within allowed scope BEFORE creating it
+    if (!file_exists($targetPath)) {
+        // Only create if we're sure it's inside the default directory
+        if (is_writable(dirname($targetPath))) {
+            @mkdir($targetPath, 0755, true);
         }
     }
     
+    $realPath = realpath($targetPath);
+
     if ($realPath && is_dir($realPath) && is_writable($realPath)) {
-        // Ensure path is within allowed scope (prevent directory traversal)
-        if ($defaultRealPath && strpos($realPath, $defaultRealPath) !== 0 && strpos($realPath, '/var/www') !== 0 && strpos($realPath, $_SERVER['DOCUMENT_ROOT'] ?? '') !== 0) {
-            // Only allow paths within project or web root
+        // Strictly ensure path is within the default directory (no arbitrary /var/www access)
+        if (strpos($realPath, $defaultRealPath) === 0) {
             return [
-                'path' => $defaultDir,
-                'relative' => 'srt_files/',
-                'valid' => true,
-                'warning' => 'Custom path not allowed, using default'
+                'path' => $realPath,
+                'relative' => 'srt_files/' . $safePath,
+                'valid' => true
             ];
         }
-        return [
-            'path' => $realPath,
-            'relative' => $exportPath,
-            'valid' => true
-        ];
     }
     
     return [
         'path' => $defaultDir,
         'relative' => 'srt_files/',
         'valid' => true,
-        'warning' => 'Invalid custom path, using default'
+        'warning' => 'Custom path not allowed, using default'
     ];
 }
 
