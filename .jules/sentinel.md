@@ -1,0 +1,4 @@
+## 2024-05-24 - Arbitrary Directory Creation & File Write via Path Traversal
+**Vulnerability:** The application allowed users to specify an arbitrary `export_path` which was used to create directories via `mkdir($exportPath, 0755, true)` BEFORE verifying if the path was within the allowed `srt_files` directory scope. Additionally, the subsequent validation allowed paths anywhere within the web root (`/var/www` or `DOCUMENT_ROOT`), leading to Arbitrary File Write.
+**Learning:** Creating directories or performing filesystem actions based on user input before properly resolving and restricting the canonical path to an allowed base directory creates severe security vulnerabilities, including arbitrary directory creation.
+**Prevention:** Always sanitize the input, resolve the canonical path, and verify that it strictly starts with the realpath of the allowed base directory before performing any filesystem operations like `mkdir` or `file_put_contents`.
