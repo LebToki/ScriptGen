@@ -1799,6 +1799,19 @@ The tool will automatically:
     setupCollapsible("exportSettingsHeader", "exportSettingsContent");
     setupCollapsible("capcutHeader", "capcutContent");
     
+    // ⚡ Bolt Optimization: Debounce function to limit execution frequency
+    // Prevents UI blocking during rapid typing, especially important for large scripts
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          func.apply(this, args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
+
     // Update stats as user types
     function updateStats() {
       const script = scriptInput.value.trim();
@@ -1847,9 +1860,12 @@ The tool will automatically:
       return date.toLocaleDateString();
     }
     
-    scriptInput.addEventListener("input", updateStats);
-    wpmInput.addEventListener("input", updateStats);
-    minTimeInput.addEventListener("input", updateStats);
+    // ⚡ Bolt Optimization: Wrap updateStats in a 300ms debounce
+    const debouncedUpdateStats = debounce(updateStats, 300);
+
+    scriptInput.addEventListener("input", debouncedUpdateStats);
+    wpmInput.addEventListener("input", debouncedUpdateStats);
+    minTimeInput.addEventListener("input", debouncedUpdateStats);
     
     // Real-time validation
     wpmInput.addEventListener('blur', () => validateForm());
@@ -2127,7 +2143,7 @@ The tool will automatically:
           if (parseInt(maxLengthInput.value) > 60) {
             maxLengthInput.value = 60;
           }
-          updateStats();
+          debouncedUpdateStats();
         } else {
           showToast('CapCut mode disabled', 'success');
         }
