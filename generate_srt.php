@@ -597,9 +597,9 @@ function listGeneratedFiles() {
         foreach ($scanDir as $file) {
             if ($file !== '.' && $file !== '..' && pathinfo($file, PATHINFO_EXTENSION) === 'srt') {
                 $filePath = "$dir/$file";
+                // ⚡ Bolt Optimization: Only calculate filemtime initially to reduce disk I/O
                 $files[] = [
                     'name' => $file,
-                    'size' => filesize($filePath),
                     'modified' => filemtime($filePath),
                     'path' => 'srt_files/' . $file
                 ];
@@ -612,9 +612,17 @@ function listGeneratedFiles() {
         return $b['modified'] - $a['modified'];
     });
     
+    // ⚡ Bolt Optimization: Slice top 10 files and only calculate filesize for them
+    $topFiles = array_slice($files, 0, 10);
+    foreach ($topFiles as &$fileInfo) {
+        $filePath = "$dir/" . $fileInfo['name'];
+        $fileInfo['size'] = filesize($filePath);
+    }
+    unset($fileInfo); // break reference
+
     echo cleanOutput([
         'success' => true,
-        'files' => $files,
-        'count' => count($files)
+        'files' => $topFiles,
+        'count' => count($files) // total count is still sent for context if needed
     ]);
 }
