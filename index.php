@@ -1570,7 +1570,7 @@ The tool will automatically:
               <span class="spinner"></span>
               <span class="btn-text"><span>⚙️</span> Generate SRT</span>
             </button>
-            <button onclick="location.reload()" class="btn btn-secondary" aria-label="Start new script">
+            <button id="newScriptBtn" class="btn btn-secondary" aria-label="Start new script">
               <span>🔄</span>
               <span>New Script</span>
             </button>
@@ -1601,11 +1601,11 @@ The tool will automatically:
         
         <div class="action-bar">
           <div class="button-group">
-            <button id="copyBtn" class="btn btn-success" disabled>
+            <button id="copyBtn" class="btn btn-success" disabled title="Generate an SRT first to enable">
               <span>📋</span>
               <span>Copy All</span>
             </button>
-            <button id="downloadBtn" class="btn btn-primary" disabled>
+            <button id="downloadBtn" class="btn btn-primary" disabled title="Generate an SRT first to enable">
               <span>⬇️</span>
               <span>Download SRT</span>
             </button>
@@ -1629,6 +1629,7 @@ The tool will automatically:
     // DOM Elements
     const previewBox = document.getElementById("previewBox");
     const processBtn = document.getElementById("processBtn");
+    const newScriptBtn = document.getElementById("newScriptBtn");
     const downloadBtn = document.getElementById("downloadBtn");
     const copyBtn = document.getElementById("copyBtn");
     const statusMessage = document.getElementById("statusMessage");
@@ -1970,6 +1971,8 @@ The tool will automatically:
         latestFile = data.filename;
         downloadBtn.disabled = false;
         copyBtn.disabled = false;
+        downloadBtn.removeAttribute("title");
+        copyBtn.removeAttribute("title");
         previewBadge.style.display = "inline-flex";
         
         if (data.stats) {
@@ -2080,6 +2083,15 @@ The tool will automatically:
     
     // Event listeners
     processBtn.addEventListener("click", processScript);
+    newScriptBtn.addEventListener("click", () => {
+      if (scriptInput.value.trim() !== '') {
+        if (confirm('Are you sure you want to start a new script? Any unsaved changes will be lost.')) {
+          location.reload();
+        }
+      } else {
+        location.reload();
+      }
+    });
     copyBtn.addEventListener("click", copyToClipboard);
     downloadBtn.addEventListener("click", downloadSRT);
     
