@@ -299,6 +299,8 @@ function processScript($script, $wpm, $minTime, $punctuationPad, $maxLength, $na
     if ($safeName === '') {
         $safeName = 'script_' . date('Y-m-d_H-i-s');
     }
+    // 🛡️ Sentinel: Prevent IDOR and accidental overwrites by making filenames unguessable
+    $safeName .= '_' . bin2hex(random_bytes(8));
     $filename = $safeName . '.srt';
 
     // Determine export directory
