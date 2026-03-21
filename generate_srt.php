@@ -595,7 +595,8 @@ function listGeneratedFiles() {
     
     if ($scanDir) {
         foreach ($scanDir as $file) {
-            if ($file !== '.' && $file !== '..' && pathinfo($file, PATHINFO_EXTENSION) === 'srt') {
+            // ⚡ Bolt Optimization: str_ends_with is significantly faster than pathinfo
+            if ($file !== '.' && $file !== '..' && str_ends_with($file, '.srt')) {
                 $filePath = "$dir/$file";
                 // ⚡ Bolt Optimization: Only calculate filemtime initially to reduce disk I/O
                 $files[] = [
