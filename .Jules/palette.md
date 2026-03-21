@@ -5,3 +5,7 @@
 ## 2025-04-18 - Interactive Divs & Fitts's Law
 **Learning:** When using `div` elements as custom interactive components (like CapCut template cards), they must have `role="button"`, `tabindex="0"`, and `keydown` event listeners for `Enter` and `Space` to be fully accessible. Furthermore, small click targets for toggles should be expanded using a `<label for="...">` wrapper around adjacent descriptive text.
 **Action:** Always verify keyboard navigability of custom components and convert adjacent descriptive text into `<label>` elements for checkboxes/toggles to increase the clickable area.
+
+## 2025-04-18 - Visually Hidden Inputs & Focus Rings
+**Learning:** Visually hiding inputs using `opacity: 0; width: 0; height: 0;` (e.g. for custom toggles like the CapCut switch) completely breaks native focus rings, making them invisible to keyboard users even if `*:focus-visible` is globally defined.
+**Action:** When creating custom styled inputs that hide the native input, always explicitly define focus styles on the adjacent styled element (e.g., `input:focus-visible + .slider`) to restore keyboard accessibility.
