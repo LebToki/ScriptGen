@@ -251,7 +251,7 @@ function processScript($script, $wpm, $minTime, $punctuationPad, $maxLength, $na
     }
 
     foreach ($chunks as $line) {
-        $wordCount = str_word_count($line);
+        $wordCount = preg_match_all('/\S+/', $line);
         $totalWords += $wordCount;
         $duration = max($minTime, $wordCount / $wpm);
         
@@ -595,7 +595,7 @@ function listGeneratedFiles() {
     
     if ($scanDir) {
         foreach ($scanDir as $file) {
-            if ($file !== '.' && $file !== '..' && pathinfo($file, PATHINFO_EXTENSION) === 'srt') {
+            if ($file !== '.' && $file !== '..' && str_ends_with($file, '.srt')) {
                 $filePath = "$dir/$file";
                 // ⚡ Bolt Optimization: Only calculate filemtime initially to reduce disk I/O
                 $files[] = [
