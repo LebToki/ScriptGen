@@ -32,27 +32,40 @@ $rateLimitMax = 30; // requests per window
 
 function checkRateLimit($rateLimitFile, $rateLimitWindow, $rateLimitMax) {
     $now = time();
-    $requests = [];
+    // Use REMOTE_ADDR directly as HTTP_X_FORWARDED_FOR can be spoofed by attackers
+    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    $ipHash = md5($ip);
     
+    $data = [];
     if (file_exists($rateLimitFile)) {
-        $data = json_decode(file_get_contents($rateLimitFile), true);
-        if ($data && is_array($data)) {
-            foreach ($data as $timestamp => $count) {
-                if ($now - $timestamp < $rateLimitWindow) {
-                    $requests[$timestamp] = $count;
-                }
+        $decoded = json_decode(file_get_contents($rateLimitFile), true);
+        if (is_array($decoded)) {
+            // Check if it's the old format (flat array of timestamps)
+            if (!empty($decoded) && !is_array(reset($decoded))) {
+                $data = []; // Reset old format
+            } else {
+                $data = $decoded;
             }
         }
     }
     
-    $totalRequests = array_sum($requests);
-    if ($totalRequests >= $rateLimitMax) {
-        return false;
+    // Clean up old entries and get current client's requests
+    $clientReqs = [];
+    foreach ($data as $client => &$reqs) {
+        foreach ($reqs as $ts => $count) {
+            if ($now - $ts >= $rateLimitWindow) unset($reqs[$ts]);
+        }
+        if (empty($reqs)) unset($data[$client]);
+        elseif ($client === $ipHash) $clientReqs = $reqs;
     }
+    unset($reqs);
+
+    if (array_sum($clientReqs) >= $rateLimitMax) return false;
     
     // Increment counter
-    $requests[$now] = isset($requests[$now]) ? $requests[$now] + 1 : 1;
-    @file_put_contents($rateLimitFile, json_encode($requests));
+    if (!isset($data[$ipHash])) $data[$ipHash] = [];
+    $data[$ipHash][$now] = isset($data[$ipHash][$now]) ? $data[$ipHash][$now] + 1 : 1;
+    @file_put_contents($rateLimitFile, json_encode($data));
     return true;
 }
 
