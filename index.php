@@ -403,7 +403,8 @@
     .collapsible-content {
       max-height: 0;
       overflow: hidden;
-      transition: max-height 0.3s ease-out;
+      visibility: hidden;
+      transition: max-height 0.3s ease-out, visibility 0s linear 0.3s;
       background: rgba(0, 0, 0, 0.15);
       border: 1px solid var(--glass-border);
       border-top: none;
@@ -412,6 +413,8 @@
     
     .collapsible-content.active {
       max-height: 500px;
+      visibility: visible;
+      transition: max-height 0.3s ease-out, visibility 0s linear 0s;
     }
     
     .collapsible-body {
@@ -1780,6 +1783,7 @@ The tool will automatically:
         header.setAttribute('role', 'button');
         header.setAttribute('tabindex', '0');
         header.setAttribute('aria-expanded', 'false');
+        header.setAttribute('aria-controls', contentId);
         
         header.addEventListener('keydown', (e) => {
           if (e.key === 'Enter' || e.key === ' ') {
