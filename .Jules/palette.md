@@ -6,6 +6,6 @@
 **Learning:** When using `div` elements as custom interactive components (like CapCut template cards), they must have `role="button"`, `tabindex="0"`, and `keydown` event listeners for `Enter` and `Space` to be fully accessible. Furthermore, small click targets for toggles should be expanded using a `<label for="...">` wrapper around adjacent descriptive text.
 **Action:** Always verify keyboard navigability of custom components and convert adjacent descriptive text into `<label>` elements for checkboxes/toggles to increase the clickable area.
 
-## 2025-04-18 - Keyboard Focus in Collapsed Content
-**Learning:** Hiding elements visually with `max-height: 0` and `overflow: hidden` does not remove them from the tab focus order, creating a confusing keyboard navigation experience where focus disappears into hidden content.
-**Action:** Always combine `max-height` transitions with `visibility: hidden; transition: visibility 0s <delay>;` for collapsed states and `visibility: visible; transition: visibility 0s 0s;` for active states to ensure interactive elements inside are properly removed from tab order.
+## 2025-04-18 - Visually Hidden Inputs & Focus Rings
+**Learning:** Visually hiding inputs using `opacity: 0; width: 0; height: 0;` (e.g. for custom toggles like the CapCut switch) completely breaks native focus rings, making them invisible to keyboard users even if `*:focus-visible` is globally defined.
+**Action:** When creating custom styled inputs that hide the native input, always explicitly define focus styles on the adjacent styled element (e.g., `input:focus-visible + .slider`) to restore keyboard accessibility.
