@@ -1759,9 +1759,19 @@ The tool will automatically:
       if (!feedback) {
         feedback = document.createElement('div');
         feedback.className = 'invalid-feedback';
+        feedback.id = input.id + '-error';
         group.appendChild(feedback);
       }
       feedback.textContent = message;
+
+      input.setAttribute('aria-invalid', 'true');
+
+      let describedbyAttr = input.getAttribute('aria-describedby') || '';
+      let tokens = describedbyAttr.split(/\s+/).filter(Boolean);
+      if (!tokens.includes(feedback.id)) {
+        tokens.push(feedback.id);
+        input.setAttribute('aria-describedby', tokens.join(' '));
+      }
     }
     
     function clearFieldError(input) {
@@ -1771,6 +1781,22 @@ The tool will automatically:
       group.classList.remove('has-error');
       input.classList.remove('is-invalid');
       input.classList.add('is-valid');
+
+      input.removeAttribute('aria-invalid');
+
+      let feedback = group.querySelector('.invalid-feedback');
+      if (feedback) {
+        let describedbyAttr = input.getAttribute('aria-describedby') || '';
+        let tokens = describedbyAttr.split(/\s+/).filter(Boolean);
+        if (tokens.includes(feedback.id)) {
+          let newTokens = tokens.filter(t => t !== feedback.id);
+          if (newTokens.length > 0) {
+            input.setAttribute('aria-describedby', newTokens.join(' '));
+          } else {
+            input.removeAttribute('aria-describedby');
+          }
+        }
+      }
     }
     
     // Collapsible panels

@@ -9,3 +9,7 @@
 ## 2025-04-18 - Visually Hidden Inputs & Focus Rings
 **Learning:** Visually hiding inputs using `opacity: 0; width: 0; height: 0;` (e.g. for custom toggles like the CapCut switch) completely breaks native focus rings, making them invisible to keyboard users even if `*:focus-visible` is globally defined.
 **Action:** When creating custom styled inputs that hide the native input, always explicitly define focus styles on the adjacent styled element (e.g., `input:focus-visible + .slider`) to restore keyboard accessibility.
+
+## 2025-04-18 - Dynamic ARIA for Inline Validation
+**Learning:** Inline form validation messages injected dynamically must be linked to their inputs using `aria-invalid="true"` and `aria-describedby` so screen readers announce the error when focus remains on or returns to the input.
+**Action:** Whenever implementing `setFieldError` or similar DOM-manipulation validation, dynamically set `aria-invalid` and append the error div's ID to `aria-describedby`, ensuring existing attributes aren't overwritten.
