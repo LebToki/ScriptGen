@@ -377,21 +377,32 @@ function splitIntoChunks($text, $maxLength = 450) {
             // Split long sentences into readable chunks
             $words = explode(' ', $sentence);
             $buffer = '';
+            $bufferLen = 0;
             
+            // ⚡ Bolt Optimization: Track string length in separate integer to avoid
+            // O(N²) string concatenation and length checking in loop
             foreach ($words as $word) {
-                $testLength = strlen($buffer . ' ' . $word);
+                if ($bufferLen === 0) {
+                    $buffer = $word;
+                    $bufferLen = strlen($word);
+                    continue;
+                }
+
+                $wordLen = strlen($word);
                 
-                // Start new chunk if adding word exceeds ideal length
-                if ($testLength > $idealLineLength && !empty($buffer)) {
+                // Start new chunk if adding word exceeds ideal length (+1 for space)
+                if ($bufferLen + 1 + $wordLen > $idealLineLength) {
                     $rawChunks[] = trim($buffer);
                     $buffer = $word;
+                    $bufferLen = $wordLen;
                 } else {
                     $buffer = trim($buffer . ' ' . $word);
+                    $bufferLen = strlen($buffer);
                 }
             }
             
             // Add remaining buffer
-            if (!empty($buffer)) {
+            if ($bufferLen !== 0) {
                 $rawChunks[] = trim($buffer);
             }
         }
@@ -556,8 +567,9 @@ function addStandardCapCutFormatting($text) {
     // Ensure proper capitalization and punctuation
     $text = ucfirst(strtolower($text));
     
-    // Add proper ending punctuation if missing
-    if (!preg_match('/[.!?]$/', $text)) {
+    // ⚡ Bolt Optimization: Use fast string check instead of slow regex for loop operations
+    $lastChar = substr($text, -1);
+    if ($lastChar !== '.' && $lastChar !== '!' && $lastChar !== '?') {
         $text .= '.';
     }
     

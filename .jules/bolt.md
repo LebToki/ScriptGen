@@ -12,3 +12,11 @@
 ## 2026-03-21 - File Extension Checking Performance
 **Learning:** `str_ends_with($file, '.ext')` is significantly faster (about 5x in simple benchmarks) than `pathinfo($file, PATHINFO_EXTENSION) === 'ext'` in PHP userland when iterating through directories with many files. `pathinfo` has more overhead because it returns an array of path information or extracts a specific part, whereas `str_ends_with` is a highly optimized simple string check.
 **Action:** Use `str_ends_with()` or `strpos()` for simple extension checking instead of `pathinfo()` inside loops or hot paths, particularly for tasks involving bulk file processing like `scandir()`.
+
+## 2025-04-18 - String Building Performance in PHP Loops
+**Learning:** Building strings word by word inside a loop using concatenation and checking the length (`strlen($buffer . ' ' . $word)`) creates an O(N²) bottleneck because the entire string must be re-allocated and copied on every iteration. This is especially severe for large scripts.
+**Action:** When building strings in a loop and checking length, track the accumulated length in a separate integer variable (`$bufferLen += 1 + strlen($word)`) to avoid copying the string just to measure it.
+
+## 2025-04-18 - Fast String End Checking
+**Learning:** Using `preg_match('/[.!?]$/', $text)` to check if a string ends with specific characters is significantly slower than using `substr($text, -1)` and a simple equality check (`!== '.' && !== '!' && !== '?'`), particularly when called thousands of times per request for formatting subtitles.
+**Action:** Use native string functions like `substr` or `str_ends_with` instead of regular expressions for simple prefix/suffix checks on high-volume data.
