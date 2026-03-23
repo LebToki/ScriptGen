@@ -25,6 +25,21 @@ $maxInputSize = 10 * 1024 * 1024;
 ini_set('post_max_size', $maxInputSize);
 ini_set('upload_max_filesize', $maxInputSize);
 
+// Secure session start
+session_name('scriptgen_session');
+session_set_cookie_params([
+    'lifetime' => 86400, // 24 hours
+    'path' => '/',
+    'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
+    'httponly' => true,
+    'samesite' => 'Strict'
+]);
+session_start();
+
+if (!isset($_SESSION['user_files'])) {
+    $_SESSION['user_files'] = [];
+}
+
 // Rate limiting (simple implementation)
 $rateLimitFile = __DIR__ . '/.rate_limit';
 $rateLimitWindow = 60; // seconds
@@ -331,6 +346,12 @@ function processScript($script, $wpm, $minTime, $punctuationPad, $maxLength, $na
         if (file_put_contents($path, $srt) === false) {
             throw new Exception('Could not save SRT file');
         }
+
+        // Track the generated file for the current user's session
+        // Prevent storing duplicates
+        if (!in_array($filename, $_SESSION['user_files'])) {
+            $_SESSION['user_files'][] = $filename;
+        }
     }
 
     return [
@@ -443,6 +464,11 @@ function handleDownload($filename) {
     $realDir = realpath($dir);
     if (strpos($realPath, $realDir) !== 0) {
         throw new Exception('Access denied');
+    }
+
+    // 🛡️ Sentinel: IDOR Protection - Only allow downloading files generated in the current session
+    if (!in_array($safeName, $_SESSION['user_files'])) {
+        throw new Exception('Access denied. File does not belong to your session.');
     }
 
     header('Content-Type: text/plain; charset=UTF-8');
@@ -608,8 +634,8 @@ function listGeneratedFiles() {
     
     if ($scanDir) {
         foreach ($scanDir as $file) {
-            // ⚡ Bolt Optimization: str_ends_with is significantly faster than pathinfo
-            if ($file !== '.' && $file !== '..' && str_ends_with($file, '.srt')) {
+            // 🛡️ Sentinel: Only list files that belong to the current user's session
+            if ($file !== '.' && $file !== '..' && str_ends_with($file, '.srt') && in_array($file, $_SESSION['user_files'])) {
                 $filePath = "$dir/$file";
                 // ⚡ Bolt Optimization: Only calculate filemtime initially to reduce disk I/O
                 $files[] = [
