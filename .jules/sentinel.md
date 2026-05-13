@@ -1,4 +1,14 @@
-## 2025-05-24 - Path Traversal bypass via empty `strpos` needle
-**Vulnerability:** A path traversal check logic used `strpos($path, $_SERVER['DOCUMENT_ROOT'] ?? '') !== 0` to ensure a given file path is outside the webroot. Because `$_SERVER['DOCUMENT_ROOT']` can be empty (for instance, in CLI mode or misconfigured servers), the needle evaluates to an empty string. `strpos($path, '')` always returns 0 in PHP 8, satisfying the condition and bypassing the check entirely.
-**Learning:** Checking for prefixes using `strpos` with an empty needle string returns 0, falsely implying a match at the beginning of the string.
-**Prevention:** Always ensure the prefix needle is non-empty before using it in security-critical `strpos` checks, e.g. `$prefix !== '' && strpos($path, $prefix) === 0`.
+
+## 2024-05-24 - Arbitrary Directory Creation & File Write via Path Traversal
+**Vulnerability:** The application allowed users to specify an arbitrary `export_path` which was used to create directories via `mkdir($exportPath, 0755, true)` BEFORE verifying if the path was within the allowed `srt_files` directory scope. Additionally, the subsequent validation allowed paths anywhere within the web root (`/var/www` or `DOCUMENT_ROOT`), leading to Arbitrary File Write.
+**Learning:** Creating directories or performing filesystem actions based on user input before properly resolving and restricting the canonical path to an allowed base directory creates severe security vulnerabilities, including arbitrary directory creation.
+**Prevention:** Always sanitize the input, resolve the canonical path, and verify that it strictly starts with the realpath of the allowed base directory before performing any filesystem operations like `mkdir` or `file_put_contents`.
+## 2025-04-18 - Global DoS via Shared Rate Limit State
+**Vulnerability:** The rate limiter implementation in `generate_srt.php` used a single shared timestamp array (`.rate_limit`) for all requests regardless of origin. This meant any attacker could intentionally exhaust the global allowed request quota, resulting in a global Denial of Service (DoS) for all other valid users.
+**Learning:** Shared security state without scoping (like IP-address or user-sessions) leads to systemic vulnerabilities where the mechanism can be weaponized to lock everyone out.
+**Prevention:** Always implement rate limiting on a per-client basis (e.g., using a hashed IP address or session ID as the key) rather than maintaining a single global counter.
+## 2024-05-24 - IDOR and Information Disclosure via Unscoped Generated Files
+**Vulnerability:** The application previously exposed all generated SRT files to any user accessing the API. Anyone could list the contents of the `srt_files` directory or directly download any generated SRT file if the name was known or guessed, leading to an Insecure Direct Object Reference (IDOR) and Information Disclosure vulnerability.
+**Learning:** Returning global server state (like a directory listing of all user files) or allowing access to files based purely on a filename parameter without authenticating the request's ownership or scope creates critical privacy and security risks.
+**Prevention:** Always implement session management or another form of authorization scoping to tie resources to the specific user or session that created them. Validate that the requesting user has the right to access the requested resource before serving it.
+

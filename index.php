@@ -403,7 +403,8 @@
     .collapsible-content {
       max-height: 0;
       overflow: hidden;
-      transition: max-height 0.3s ease-out;
+      visibility: hidden;
+      transition: max-height 0.3s ease-out, visibility 0s linear 0.3s;
       background: rgba(0, 0, 0, 0.15);
       border: 1px solid var(--glass-border);
       border-top: none;
@@ -412,6 +413,8 @@
     
     .collapsible-content.active {
       max-height: 500px;
+      visibility: visible;
+      transition: max-height 0.3s ease-out, visibility 0s linear 0s;
     }
     
     .collapsible-body {
@@ -1258,6 +1261,11 @@
       height: 0;
     }
     
+    .switch input:focus-visible + .slider {
+      outline: 2px solid var(--accent-primary);
+      outline-offset: 2px;
+    }
+
     .slider {
       position: absolute;
       cursor: pointer;
@@ -1335,7 +1343,7 @@
         <div class="section-divider">Timing Controls</div>
         <div class="controls-grid">
           <div class="form-group">
-            <label class="form-label tooltip" data-tooltip="Words spoken per second">
+            <label for="wpm" class="form-label tooltip" data-tooltip="Words spoken per second">
               Words/Second
             </label>
             <div class="input-group">
@@ -1345,7 +1353,7 @@
           </div>
           
           <div class="form-group">
-            <label class="form-label tooltip" data-tooltip="Minimum subtitle duration">
+            <label for="min_time" class="form-label tooltip" data-tooltip="Minimum subtitle duration">
               Min Duration (s)
             </label>
             <div class="input-group">
@@ -1355,7 +1363,7 @@
           </div>
           
           <div class="form-group">
-            <label class="form-label tooltip" data-tooltip="Pause after punctuation">
+            <label for="punctuation_pad" class="form-label tooltip" data-tooltip="Pause after punctuation">
               Pause Padding (s)
             </label>
             <div class="input-group">
@@ -1377,7 +1385,7 @@
           <div class="collapsible-body">
             <div class="controls-grid controls-grid-4">
               <div class="form-group">
-                <label class="form-label tooltip" data-tooltip="Frame rate for timing alignment">
+                <label for="fps" class="form-label tooltip" data-tooltip="Frame rate for timing alignment">
                   Frame Rate (FPS)
                 </label>
                 <select id="fps" class="form-control">
@@ -1394,7 +1402,7 @@
               </div>
               
               <div class="form-group">
-                <label class="form-label tooltip" data-tooltip="Offset for all timecodes">
+                <label for="startOffset" class="form-label tooltip" data-tooltip="Offset for all timecodes">
                   Start Offset (s)
                 </label>
                 <div class="input-group">
@@ -1404,7 +1412,7 @@
               </div>
               
               <div class="form-group">
-                <label class="form-label tooltip" data-tooltip="Minimum gap between subtitles">
+                <label for="subtitleGap" class="form-label tooltip" data-tooltip="Minimum gap between subtitles">
                   Subtitle Gap (ms)
                 </label>
                 <div class="input-group">
@@ -1414,7 +1422,7 @@
               </div>
               
               <div class="form-group">
-                <label class="form-label tooltip" data-tooltip="Maximum characters per block">
+                <label for="maxLength" class="form-label tooltip" data-tooltip="Maximum characters per block">
                   Max Block Length
                 </label>
                 <div class="input-group">
@@ -1438,33 +1446,33 @@
         <div class="collapsible-content capcut-section" id="capcutContent">
           <div class="collapsible-body">
             <div class="form-group">
-              <label class="form-label">
+              <label for="capcutMode" class="form-label">
                 <span class="tooltip" data-tooltip="Enable CapCut-specific optimizations for mobile video editing">
                   CapCut Mode
                 </span>
               </label>
-              <div class="input-group">
+              <div class="input-group" style="display: flex; align-items: center;">
                 <label class="switch" style="margin: 0;">
                   <input type="checkbox" id="capcutMode">
                   <span class="slider"></span>
                 </label>
-                <span style="margin-left: 12px; color: var(--text-muted); font-size: 0.85rem;">Optimize for CapCut mobile editing</span>
+                <label for="capcutMode" style="margin-left: 12px; color: var(--text-muted); font-size: 0.85rem; cursor: pointer;">Optimize for CapCut mobile editing</label>
               </div>
             </div>
             
             <div class="section-divider" style="margin: 20px 0;">CapCut Templates</div>
             <div class="template-grid">
-              <div class="template-card active" data-template="standard">
+              <div class="template-card active" data-template="standard" tabindex="0" role="button" aria-pressed="true">
                 <span class="template-icon">📝</span>
                 <div class="template-name">Standard</div>
                 <div class="template-desc">Clean, professional subtitles</div>
               </div>
-              <div class="template-card" data-template="social_media">
+              <div class="template-card" data-template="social_media" tabindex="0" role="button" aria-pressed="false">
                 <span class="template-icon">📱</span>
                 <div class="template-name">Social Media</div>
                 <div class="template-desc">Engaging with emojis</div>
               </div>
-              <div class="template-card" data-template="educational">
+              <div class="template-card" data-template="educational" tabindex="0" role="button" aria-pressed="false">
                 <span class="template-icon">🎓</span>
                 <div class="template-name">Educational</div>
                 <div class="template-desc">Informative & clear</div>
@@ -1474,7 +1482,7 @@
             <div class="section-divider" style="margin: 20px 0;">CapCut Styles</div>
             <div class="controls-grid">
               <div class="form-group">
-                <label class="form-label">Text Style</label>
+                <label for="capcutStyle" class="form-label">Text Style</label>
                 <select id="capcutStyle" class="form-control">
                   <option value="default" selected>Default</option>
                   <option value="bold">Bold</option>
@@ -1484,7 +1492,7 @@
               </div>
               
               <div class="form-group">
-                <label class="form-label">Font Size</label>
+                <label for="capcutFontSize" class="form-label">Font Size</label>
                 <div class="input-group">
                   <span class="input-icon">🔤</span>
                   <input type="range" id="capcutFontSize" class="form-control" min="12" max="24" value="16" step="1">
@@ -1492,7 +1500,7 @@
               </div>
               
               <div class="form-group">
-                <label class="form-label">Text Color</label>
+                <label for="capcutColor" class="form-label">Text Color</label>
                 <input type="color" id="capcutColor" class="form-control" value="#ffffff">
               </div>
             </div>
@@ -1527,7 +1535,7 @@
         <div class="collapsible-content" id="exportSettingsContent">
           <div class="collapsible-body">
             <div class="form-group">
-              <label class="form-label">Export Path</label>
+              <label for="exportPath" class="form-label">Export Path</label>
               <div class="path-input-wrapper">
                 <input type="text" id="exportPath" class="form-control" placeholder="Default: srt_files/">
               </div>
@@ -1539,7 +1547,7 @@
         <!-- Script Content -->
         <div class="section-divider">Script Content</div>
         <div class="form-group">
-          <label class="form-label form-label-required">Your Script</label>
+          <label for="script" class="form-label form-label-required">Your Script</label>
           <textarea id="script" class="form-control" placeholder="Paste your script here...
 
 The tool will automatically:
@@ -1570,7 +1578,7 @@ The tool will automatically:
               <span class="spinner"></span>
               <span class="btn-text"><span>⚙️</span> Generate SRT</span>
             </button>
-            <button onclick="location.reload()" class="btn btn-secondary" aria-label="Start new script">
+            <button id="newScriptBtn" class="btn btn-secondary" aria-label="Start new script">
               <span>🔄</span>
               <span>New Script</span>
             </button>
@@ -1591,7 +1599,7 @@ The tool will automatically:
         </div>
         
         <div class="preview-container">
-          <div id="previewBox" class="preview-box" contenteditable="false">
+          <div id="previewBox" class="preview-box" contenteditable="false" tabindex="0" aria-label="Generated Subtitles Preview">
             <div class="preview-empty">
               <div class="preview-empty-icon">📋</div>
               <div class="preview-empty-text">Click "Generate SRT" to create your subtitle file</div>
@@ -1601,11 +1609,11 @@ The tool will automatically:
         
         <div class="action-bar">
           <div class="button-group">
-            <button id="copyBtn" class="btn btn-success" disabled>
+            <button id="copyBtn" class="btn btn-success" disabled title="Generate an SRT first to enable">
               <span>📋</span>
               <span>Copy All</span>
             </button>
-            <button id="downloadBtn" class="btn btn-primary" disabled>
+            <button id="downloadBtn" class="btn btn-primary" disabled title="Generate an SRT first to enable">
               <span>⬇️</span>
               <span>Download SRT</span>
             </button>
@@ -1629,6 +1637,7 @@ The tool will automatically:
     // DOM Elements
     const previewBox = document.getElementById("previewBox");
     const processBtn = document.getElementById("processBtn");
+    const newScriptBtn = document.getElementById("newScriptBtn");
     const downloadBtn = document.getElementById("downloadBtn");
     const copyBtn = document.getElementById("copyBtn");
     const statusMessage = document.getElementById("statusMessage");
@@ -1750,9 +1759,19 @@ The tool will automatically:
       if (!feedback) {
         feedback = document.createElement('div');
         feedback.className = 'invalid-feedback';
+        feedback.id = input.id + '-error';
         group.appendChild(feedback);
       }
       feedback.textContent = message;
+
+      input.setAttribute('aria-invalid', 'true');
+
+      let describedbyAttr = input.getAttribute('aria-describedby') || '';
+      let tokens = describedbyAttr.split(/\s+/).filter(Boolean);
+      if (!tokens.includes(feedback.id)) {
+        tokens.push(feedback.id);
+        input.setAttribute('aria-describedby', tokens.join(' '));
+      }
     }
     
     function clearFieldError(input) {
@@ -1762,6 +1781,22 @@ The tool will automatically:
       group.classList.remove('has-error');
       input.classList.remove('is-invalid');
       input.classList.add('is-valid');
+
+      input.removeAttribute('aria-invalid');
+
+      let feedback = group.querySelector('.invalid-feedback');
+      if (feedback) {
+        let describedbyAttr = input.getAttribute('aria-describedby') || '';
+        let tokens = describedbyAttr.split(/\s+/).filter(Boolean);
+        if (tokens.includes(feedback.id)) {
+          let newTokens = tokens.filter(t => t !== feedback.id);
+          if (newTokens.length > 0) {
+            input.setAttribute('aria-describedby', newTokens.join(' '));
+          } else {
+            input.removeAttribute('aria-describedby');
+          }
+        }
+      }
     }
     
     // Collapsible panels
@@ -1779,6 +1814,7 @@ The tool will automatically:
         header.setAttribute('role', 'button');
         header.setAttribute('tabindex', '0');
         header.setAttribute('aria-expanded', 'false');
+        header.setAttribute('aria-controls', contentId);
         
         header.addEventListener('keydown', (e) => {
           if (e.key === 'Enter' || e.key === ' ') {
@@ -1799,6 +1835,19 @@ The tool will automatically:
     setupCollapsible("exportSettingsHeader", "exportSettingsContent");
     setupCollapsible("capcutHeader", "capcutContent");
     
+    // ⚡ Bolt Optimization: Debounce function to limit execution frequency
+    // Prevents UI blocking during rapid typing, especially important for large scripts
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          func.apply(this, args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
+
     // Update stats as user types
     function updateStats() {
       const script = scriptInput.value.trim();
@@ -1807,7 +1856,10 @@ The tool will automatically:
         return;
       }
       
-      const words = script.split(/\s+/).filter(w => w.length > 0).length;
+      // ⚡ Bolt Optimization: Use regex match instead of split/filter for faster word counting
+      // Reduces array allocations and improves performance on large texts during rapid typing
+      const match = script.match(/\S+/g);
+      const words = match ? match.length : 0;
       const chars = script.length;
       const wpm = parseFloat(wpmInput.value) || 3;
       const minTime = parseFloat(minTimeInput.value) || 1.5;
@@ -1844,9 +1896,12 @@ The tool will automatically:
       return date.toLocaleDateString();
     }
     
-    scriptInput.addEventListener("input", updateStats);
-    wpmInput.addEventListener("input", updateStats);
-    minTimeInput.addEventListener("input", updateStats);
+    // ⚡ Bolt Optimization: Wrap updateStats in a 300ms debounce
+    const debouncedUpdateStats = debounce(updateStats, 300);
+
+    scriptInput.addEventListener("input", debouncedUpdateStats);
+    wpmInput.addEventListener("input", debouncedUpdateStats);
+    minTimeInput.addEventListener("input", debouncedUpdateStats);
     
     // Real-time validation
     wpmInput.addEventListener('blur', () => validateForm());
@@ -1951,6 +2006,8 @@ The tool will automatically:
         latestFile = data.filename;
         downloadBtn.disabled = false;
         copyBtn.disabled = false;
+        downloadBtn.removeAttribute("title");
+        copyBtn.removeAttribute("title");
         previewBadge.style.display = "inline-flex";
         
         if (data.stats) {
@@ -2061,6 +2118,15 @@ The tool will automatically:
     
     // Event listeners
     processBtn.addEventListener("click", processScript);
+    newScriptBtn.addEventListener("click", () => {
+      if (scriptInput.value.trim() !== '') {
+        if (confirm('Are you sure you want to start a new script? Any unsaved changes will be lost.')) {
+          location.reload();
+        }
+      } else {
+        location.reload();
+      }
+    });
     copyBtn.addEventListener("click", copyToClipboard);
     downloadBtn.addEventListener("click", downloadSRT);
     
@@ -2103,10 +2169,24 @@ The tool will automatically:
       // Template selection
       const templateCards = document.querySelectorAll('.template-card');
       templateCards.forEach(card => {
-        card.addEventListener('click', () => {
-          templateCards.forEach(c => c.classList.remove('active'));
+        const selectTemplate = () => {
+          templateCards.forEach(c => {
+            c.classList.remove('active');
+            c.setAttribute('aria-pressed', 'false');
+          });
           card.classList.add('active');
+          card.setAttribute('aria-pressed', 'true');
+          updateCapCutPreview();
           showToast(`CapCut template: ${card.querySelector('.template-name').textContent}`, 'capcut');
+        };
+
+        card.addEventListener('click', selectTemplate);
+
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            selectTemplate();
+          }
         });
       });
       
@@ -2124,7 +2204,7 @@ The tool will automatically:
           if (parseInt(maxLengthInput.value) > 60) {
             maxLengthInput.value = 60;
           }
-          updateStats();
+          debouncedUpdateStats();
         } else {
           showToast('CapCut mode disabled', 'success');
         }

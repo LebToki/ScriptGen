@@ -25,6 +25,21 @@ $maxInputSize = 10 * 1024 * 1024;
 ini_set('post_max_size', $maxInputSize);
 ini_set('upload_max_filesize', $maxInputSize);
 
+// Secure session start
+session_name('scriptgen_session');
+session_set_cookie_params([
+    'lifetime' => 86400, // 24 hours
+    'path' => '/',
+    'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
+    'httponly' => true,
+    'samesite' => 'Strict'
+]);
+session_start();
+
+if (!isset($_SESSION['user_files'])) {
+    $_SESSION['user_files'] = [];
+}
+
 // Rate limiting (simple implementation)
 $rateLimitFile = __DIR__ . '/.rate_limit';
 $rateLimitWindow = 60; // seconds
@@ -32,27 +47,40 @@ $rateLimitMax = 30; // requests per window
 
 function checkRateLimit($rateLimitFile, $rateLimitWindow, $rateLimitMax) {
     $now = time();
-    $requests = [];
+    // Use REMOTE_ADDR directly as HTTP_X_FORWARDED_FOR can be spoofed by attackers
+    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    $ipHash = md5($ip);
     
+    $data = [];
     if (file_exists($rateLimitFile)) {
-        $data = json_decode(file_get_contents($rateLimitFile), true);
-        if ($data && is_array($data)) {
-            foreach ($data as $timestamp => $count) {
-                if ($now - $timestamp < $rateLimitWindow) {
-                    $requests[$timestamp] = $count;
-                }
+        $decoded = json_decode(file_get_contents($rateLimitFile), true);
+        if (is_array($decoded)) {
+            // Check if it's the old format (flat array of timestamps)
+            if (!empty($decoded) && !is_array(reset($decoded))) {
+                $data = []; // Reset old format
+            } else {
+                $data = $decoded;
             }
         }
     }
     
-    $totalRequests = array_sum($requests);
-    if ($totalRequests >= $rateLimitMax) {
-        return false;
+    // Clean up old entries and get current client's requests
+    $clientReqs = [];
+    foreach ($data as $client => &$reqs) {
+        foreach ($reqs as $ts => $count) {
+            if ($now - $ts >= $rateLimitWindow) unset($reqs[$ts]);
+        }
+        if (empty($reqs)) unset($data[$client]);
+        elseif ($client === $ipHash) $clientReqs = $reqs;
     }
+    unset($reqs);
+
+    if (array_sum($clientReqs) >= $rateLimitMax) return false;
     
     // Increment counter
-    $requests[$now] = isset($requests[$now]) ? $requests[$now] + 1 : 1;
-    @file_put_contents($rateLimitFile, json_encode($requests));
+    if (!isset($data[$ipHash])) $data[$ipHash] = [];
+    $data[$ipHash][$now] = isset($data[$ipHash][$now]) ? $data[$ipHash][$now] + 1 : 1;
+    @file_put_contents($rateLimitFile, json_encode($data));
     return true;
 }
 
@@ -76,8 +104,8 @@ function stripMarkdown($text) {
 function sanitizeFilename($filename, $default = 'script') {
     // Remove any path components
     $filename = basename($filename);
-    // Remove anything except alphanumeric, dash, underscore
-    $filename = preg_replace('/[^a-zA-Z0-9_-]/', '_', $filename);
+    // Remove anything except alphanumeric, dash, underscore, and period
+    $filename = preg_replace('/[^a-zA-Z0-9_.-]/', '_', $filename);
     // Remove duplicate underscores
     $filename = preg_replace('/_+/', '_', $filename);
     // Limit length
@@ -97,19 +125,30 @@ function validateExportPath($exportPath, $defaultDir) {
         ];
     }
     
-    // Resolve the path
-    $realPath = realpath($exportPath);
-    
-    // Security check: ensure path doesn't go outside allowed directories
     $defaultRealPath = realpath($defaultDir);
+    if (!$defaultRealPath) {
+        if (!is_dir($defaultDir)) {
+            mkdir($defaultDir, 0755, true);
+        }
+        $defaultRealPath = realpath($defaultDir);
+    }
+
+    // Sanitize the requested path to prevent directory traversal
+    $safePath = preg_replace('/[^a-zA-Z0-9_\-\/]/', '', $exportPath);
+    $safePath = trim(str_replace('..', '', $safePath), '/');
+
+    $targetPath = $defaultDir . '/' . $safePath;
     
-    if ($realPath === false) {
-        // Try to create the directory if it doesn't exist
-        if (is_writable(dirname($exportPath)) && mkdir($exportPath, 0755, true)) {
-            $realPath = realpath($exportPath);
+    // Ensure path is within allowed scope BEFORE creating it
+    if (!file_exists($targetPath)) {
+        // Only create if we're sure it's inside the default directory
+        if (is_writable(dirname($targetPath))) {
+            @mkdir($targetPath, 0755, true);
         }
     }
     
+    $realPath = realpath($targetPath);
+
     if ($realPath && is_dir($realPath) && is_writable($realPath)) {
         // Ensure path is within allowed scope (prevent directory traversal)
         $docRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
@@ -118,24 +157,18 @@ function validateExportPath($exportPath, $defaultDir) {
         if ($defaultRealPath && strpos($realPath, $defaultRealPath) !== 0 && strpos($realPath, '/var/www') !== 0 && !$isWithinDocRoot) {
             // Only allow paths within project or web root
             return [
-                'path' => $defaultDir,
-                'relative' => 'srt_files/',
-                'valid' => true,
-                'warning' => 'Custom path not allowed, using default'
+                'path' => $realPath,
+                'relative' => 'srt_files/' . $safePath,
+                'valid' => true
             ];
         }
-        return [
-            'path' => $realPath,
-            'relative' => $exportPath,
-            'valid' => true
-        ];
     }
     
     return [
         'path' => $defaultDir,
         'relative' => 'srt_files/',
         'valid' => true,
-        'warning' => 'Invalid custom path, using default'
+        'warning' => 'Custom path not allowed, using default'
     ];
 }
 
@@ -250,7 +283,7 @@ function processScript($script, $wpm, $minTime, $punctuationPad, $maxLength, $na
     }
 
     foreach ($chunks as $line) {
-        $wordCount = str_word_count($line);
+        $wordCount = preg_match_all('/\S+/', $line);
         $totalWords += $wordCount;
         $duration = max($minTime, $wordCount / $wpm);
         
@@ -317,6 +350,12 @@ function processScript($script, $wpm, $minTime, $punctuationPad, $maxLength, $na
         if (file_put_contents($path, $srt) === false) {
             throw new Exception('Could not save SRT file');
         }
+
+        // Track the generated file for the current user's session
+        // Prevent storing duplicates
+        if (!in_array($filename, $_SESSION['user_files'])) {
+            $_SESSION['user_files'][] = $filename;
+        }
     }
 
     return [
@@ -363,21 +402,32 @@ function splitIntoChunks($text, $maxLength = 450) {
             // Split long sentences into readable chunks
             $words = explode(' ', $sentence);
             $buffer = '';
+            $bufferLen = 0;
             
+            // ⚡ Bolt Optimization: Track string length in separate integer to avoid
+            // O(N²) string concatenation and length checking in loop
             foreach ($words as $word) {
-                $testLength = strlen($buffer . ' ' . $word);
+                if ($bufferLen === 0) {
+                    $buffer = $word;
+                    $bufferLen = strlen($word);
+                    continue;
+                }
+
+                $wordLen = strlen($word);
                 
-                // Start new chunk if adding word exceeds ideal length
-                if ($testLength > $idealLineLength && !empty($buffer)) {
+                // Start new chunk if adding word exceeds ideal length (+1 for space)
+                if ($bufferLen + 1 + $wordLen > $idealLineLength) {
                     $rawChunks[] = trim($buffer);
                     $buffer = $word;
+                    $bufferLen = $wordLen;
                 } else {
                     $buffer = trim($buffer . ' ' . $word);
+                    $bufferLen = strlen($buffer);
                 }
             }
             
             // Add remaining buffer
-            if (!empty($buffer)) {
+            if ($bufferLen !== 0) {
                 $rawChunks[] = trim($buffer);
             }
         }
@@ -429,6 +479,11 @@ function handleDownload($filename) {
     $realDir = realpath($dir);
     if (strpos($realPath, $realDir) !== 0) {
         throw new Exception('Access denied');
+    }
+
+    // 🛡️ Sentinel: IDOR Protection - Only allow downloading files generated in the current session
+    if (!in_array($safeName, $_SESSION['user_files'])) {
+        throw new Exception('Access denied. File does not belong to your session.');
     }
 
     header('Content-Type: text/plain; charset=UTF-8');
@@ -542,8 +597,9 @@ function addStandardCapCutFormatting($text) {
     // Ensure proper capitalization and punctuation
     $text = ucfirst(strtolower($text));
     
-    // Add proper ending punctuation if missing
-    if (!preg_match('/[.!?]$/', $text)) {
+    // ⚡ Bolt Optimization: Use fast string check instead of slow regex for loop operations
+    $lastChar = substr($text, -1);
+    if ($lastChar !== '.' && $lastChar !== '!' && $lastChar !== '?') {
         $text .= '.';
     }
     
@@ -594,11 +650,12 @@ function listGeneratedFiles() {
     
     if ($scanDir) {
         foreach ($scanDir as $file) {
-            if ($file !== '.' && $file !== '..' && pathinfo($file, PATHINFO_EXTENSION) === 'srt') {
+            // 🛡️ Sentinel: Only list files that belong to the current user's session
+            if ($file !== '.' && $file !== '..' && str_ends_with($file, '.srt') && in_array($file, $_SESSION['user_files'])) {
                 $filePath = "$dir/$file";
+                // ⚡ Bolt Optimization: Only calculate filemtime initially to reduce disk I/O
                 $files[] = [
                     'name' => $file,
-                    'size' => filesize($filePath),
                     'modified' => filemtime($filePath),
                     'path' => 'srt_files/' . $file
                 ];
@@ -611,9 +668,17 @@ function listGeneratedFiles() {
         return $b['modified'] - $a['modified'];
     });
     
+    // ⚡ Bolt Optimization: Slice top 10 files and only calculate filesize for them
+    $topFiles = array_slice($files, 0, 10);
+    foreach ($topFiles as &$fileInfo) {
+        $filePath = "$dir/" . $fileInfo['name'];
+        $fileInfo['size'] = filesize($filePath);
+    }
+    unset($fileInfo); // break reference
+
     echo cleanOutput([
         'success' => true,
-        'files' => $files,
-        'count' => count($files)
+        'files' => $topFiles,
+        'count' => count($files) // total count is still sent for context if needed
     ]);
 }
