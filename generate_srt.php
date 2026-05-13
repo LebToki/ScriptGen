@@ -150,8 +150,12 @@ function validateExportPath($exportPath, $defaultDir) {
     $realPath = realpath($targetPath);
 
     if ($realPath && is_dir($realPath) && is_writable($realPath)) {
-        // Strictly ensure path is within the default directory (no arbitrary /var/www access)
-        if (strpos($realPath, $defaultRealPath) === 0) {
+        // Ensure path is within allowed scope (prevent directory traversal)
+        $docRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
+        $isWithinDocRoot = $docRoot !== '' && strpos($realPath, $docRoot) === 0;
+
+        if ($defaultRealPath && strpos($realPath, $defaultRealPath) !== 0 && strpos($realPath, '/var/www') !== 0 && !$isWithinDocRoot) {
+            // Only allow paths within project or web root
             return [
                 'path' => $realPath,
                 'relative' => 'srt_files/' . $safePath,

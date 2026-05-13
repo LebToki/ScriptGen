@@ -1,3 +1,4 @@
+
 ## 2024-05-24 - Arbitrary Directory Creation & File Write via Path Traversal
 **Vulnerability:** The application allowed users to specify an arbitrary `export_path` which was used to create directories via `mkdir($exportPath, 0755, true)` BEFORE verifying if the path was within the allowed `srt_files` directory scope. Additionally, the subsequent validation allowed paths anywhere within the web root (`/var/www` or `DOCUMENT_ROOT`), leading to Arbitrary File Write.
 **Learning:** Creating directories or performing filesystem actions based on user input before properly resolving and restricting the canonical path to an allowed base directory creates severe security vulnerabilities, including arbitrary directory creation.
@@ -10,3 +11,4 @@
 **Vulnerability:** The application previously exposed all generated SRT files to any user accessing the API. Anyone could list the contents of the `srt_files` directory or directly download any generated SRT file if the name was known or guessed, leading to an Insecure Direct Object Reference (IDOR) and Information Disclosure vulnerability.
 **Learning:** Returning global server state (like a directory listing of all user files) or allowing access to files based purely on a filename parameter without authenticating the request's ownership or scope creates critical privacy and security risks.
 **Prevention:** Always implement session management or another form of authorization scoping to tie resources to the specific user or session that created them. Validate that the requesting user has the right to access the requested resource before serving it.
+
